@@ -26,16 +26,38 @@ const CGPACalculator = () => {
 
   const triggerConfetti = (cgpa: number) => {
     if (cgpa >= 3) {
+      // Create a temporary canvas with higher z-index for confetti
+      const canvas = document.createElement('canvas');
+      canvas.style.position = 'fixed';
+      canvas.style.top = '0';
+      canvas.style.left = '0';
+      canvas.style.width = '100vw';
+      canvas.style.height = '100vh';
+      canvas.style.pointerEvents = 'none';
+      canvas.style.zIndex = '99999'; // Higher than modal
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      document.body.appendChild(canvas);
+
       // Colorful confetti with reduced density and shorter duration
       const duration = 1000; // 1 second
       const end = Date.now() + duration;
       const colors = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEAA7", "#DDA0DD", "#98D8C8"];
 
+      const myConfetti = confetti.create(canvas, {
+        resize: true,
+        useWorker: true
+      });
+
       const frame = () => {
-        if (Date.now() > end) return;
+        if (Date.now() > end) {
+          // Remove the canvas after confetti is done
+          document.body.removeChild(canvas);
+          return;
+        }
 
         // Left side confetti
-        confetti({
+        myConfetti({
           particleCount: 3,
           angle: 60,
           spread: 55,
@@ -46,7 +68,7 @@ const CGPACalculator = () => {
         });
 
         // Right side confetti
-        confetti({
+        myConfetti({
           particleCount: 3,
           angle: 120,
           spread: 55,
@@ -57,7 +79,7 @@ const CGPACalculator = () => {
         });
 
         // Center confetti
-        confetti({
+        myConfetti({
           particleCount: 2,
           angle: 90,
           spread: 45,
