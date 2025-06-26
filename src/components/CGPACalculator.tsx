@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -26,70 +25,34 @@ const CGPACalculator = () => {
 
   const triggerConfetti = (cgpa: number) => {
     if (cgpa >= 3) {
-      // Success confetti
-      const end = Date.now() + 2000;
-      const colors = ["#0088CC", "#00AA88", "#0066CC", "#4CAF50"];
+      // Success confetti with lower density
+      const end = Date.now() + 2 * 1000; // Reduced to 2 seconds
+      const colors = ["#a786ff", "#fd8bbc", "#eca184", "#f8deb1"];
 
       const frame = () => {
         if (Date.now() > end) return;
 
         confetti({
-          particleCount: 2,
+          particleCount: 1, // Reduced from 2
           angle: 60,
-          spread: 55,
-          startVelocity: 60,
+          spread: 45, // Reduced spread
+          startVelocity: 45, // Reduced velocity
           origin: { x: 0, y: 0.5 },
           colors: colors,
         });
         confetti({
-          particleCount: 2,
+          particleCount: 1, // Reduced from 2
           angle: 120,
-          spread: 55,
-          startVelocity: 60,
+          spread: 45, // Reduced spread
+          startVelocity: 45, // Reduced velocity
           origin: { x: 1, y: 0.5 },
           colors: colors,
         });
 
         requestAnimationFrame(frame);
       };
+
       frame();
-    } else if (cgpa < 2) {
-      // Warning emoji confetti
-      const scalar = 2;
-      const handEmoji = confetti.shapeFromText({ text: "✋", scalar });
-
-      const defaults = {
-        spread: 360,
-        ticks: 60,
-        gravity: 0,
-        decay: 0.96,
-        startVelocity: 20,
-        shapes: [handEmoji],
-        scalar,
-      };
-
-      const shoot = () => {
-        confetti({
-          ...defaults,
-          particleCount: 15,
-        });
-
-        confetti({
-          ...defaults,
-          particleCount: 3,
-        });
-
-        confetti({
-          ...defaults,
-          particleCount: 8,
-          scalar: scalar / 2,
-          shapes: ["circle"],
-        });
-      };
-
-      setTimeout(shoot, 0);
-      setTimeout(shoot, 100);
-      setTimeout(shoot, 200);
     }
   };
 
