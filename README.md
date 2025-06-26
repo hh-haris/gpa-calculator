@@ -1,73 +1,94 @@
-# Welcome to your Lovable project
+# UoH GPA Calculator
 
-## Project info
+A modern, responsive GPA and CGPA calculator designed specifically for University of Hyderabad students.
 
-**URL**: https://lovable.dev/projects/fa05e78b-a31a-451e-91a9-19d3a03a0eb8
+## Features
 
-## How can I edit this code?
+- **GPA Calculator**: Calculate semester GPA based on subject marks and credit hours
+- **CGPA Calculator**: Calculate cumulative GPA across multiple semesters
+- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
+- **Modern UI**: Clean, intuitive interface with smooth animations
+- **Export Results**: Download calculation results as text files
 
-There are several ways of editing your application.
+## Technologies Used
 
-**Use Lovable**
+- **Frontend**: React 18 with TypeScript
+- **Styling**: Tailwind CSS with custom design system
+- **UI Components**: Radix UI primitives with shadcn/ui
+- **Animations**: Framer Motion
+- **Build Tool**: Vite
+- **Icons**: Lucide React
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/fa05e78b-a31a-451e-91a9-19d3a03a0eb8) and start prompting.
+## Getting Started
 
-Changes made via Lovable will be committed automatically to this repo.
+### Prerequisites
 
-**Use your preferred IDE**
+- Node.js (version 16 or higher)
+- npm or yarn package manager
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Installation
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd uoh-gpa-calculator
+```
 
-Follow these steps:
+2. Install dependencies:
+```bash
+npm install
+```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+3. Start the development server:
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+4. Open your browser and navigate to `http://localhost:8080`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Building for Production
 
-**Use GitHub Codespaces**
+```bash
+npm run build
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+The built files will be available in the `dist` directory.
 
-## What technologies are used for this project?
+## Usage
 
-This project is built with:
+### GPA Calculator
+1. Select the number of subjects (4-8)
+2. Enter subject names, marks (0-100), and credit hours
+3. Click "Calculate GPA" to see your results
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### CGPA Calculator
+1. Add semesters with their respective GPA and credit hours
+2. Click "Calculate CGPA" to see your cumulative results
 
-## How can I deploy this project?
+## Grading System
 
-Simply open [Lovable](https://lovable.dev/projects/fa05e78b-a31a-451e-91a9-19d3a03a0eb8) and click on Share -> Publish.
+The calculator uses the University of Hyderabad grading system:
 
-## Can I connect a custom domain to my Lovable project?
+- **A (85-100%)**: Excellent (4.00 GPA)
+- **A- (80-84%)**: Excellent (3.50-3.90 GPA)
+- **B+ (75-79%)**: Good (3.08-3.42 GPA)
+- **B (71-74%)**: Good (2.75-3.00 GPA)
+- **B- (68-70%)**: Good (2.50-2.67 GPA)
+- **C+ (64-67%)**: Adequate (2.17-2.42 GPA)
+- **C (61-63%)**: Adequate (1.92-2.08 GPA)
+- **C- (58-60%)**: Adequate (1.67-1.83 GPA)
+- **D+ (54-57%)**: Minimum Acceptable (1.33-1.58 GPA)
+- **D (50-53%)**: Minimum Acceptable (1.00-1.25 GPA)
+- **F (<50%)**: Fail (0.00 GPA)
 
-Yes, you can!
+## Contributing
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+This project was created by students of Batch 2024 – AI Section A & B. Contributions and improvements are welcome!
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## Disclaimer
+
+While this calculator is designed with care and accuracy in mind, any unexpected errors or incorrect results are beyond our responsibility. Please verify important calculations with official university resources.
+
+## License
+
+This project is open source and available under the MIT License.

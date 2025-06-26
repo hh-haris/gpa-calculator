@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -51,26 +50,26 @@ const GPACalculator = () => {
 
   const triggerConfetti = (gpa: number) => {
     if (gpa >= 3) {
-      // Success confetti
-      const end = Date.now() + 2000;
+      // Success confetti with reduced density
+      const end = Date.now() + 1500;
       const colors = ["#0088CC", "#00AA88", "#0066CC", "#4CAF50"];
 
       const frame = () => {
         if (Date.now() > end) return;
 
         confetti({
-          particleCount: 2,
+          particleCount: 1,
           angle: 60,
-          spread: 55,
-          startVelocity: 60,
+          spread: 45,
+          startVelocity: 45,
           origin: { x: 0, y: 0.5 },
           colors: colors,
         });
         confetti({
-          particleCount: 2,
+          particleCount: 1,
           angle: 120,
-          spread: 55,
-          startVelocity: 60,
+          spread: 45,
+          startVelocity: 45,
           origin: { x: 1, y: 0.5 },
           colors: colors,
         });
@@ -78,43 +77,6 @@ const GPACalculator = () => {
         requestAnimationFrame(frame);
       };
       frame();
-    } else if (gpa < 2) {
-      // Warning emoji confetti
-      const scalar = 2;
-      const handEmoji = confetti.shapeFromText({ text: "✋", scalar });
-
-      const defaults = {
-        spread: 360,
-        ticks: 60,
-        gravity: 0,
-        decay: 0.96,
-        startVelocity: 20,
-        shapes: [handEmoji],
-        scalar,
-      };
-
-      const shoot = () => {
-        confetti({
-          ...defaults,
-          particleCount: 15,
-        });
-
-        confetti({
-          ...defaults,
-          particleCount: 3,
-        });
-
-        confetti({
-          ...defaults,
-          particleCount: 8,
-          scalar: scalar / 2,
-          shapes: ["circle"],
-        });
-      };
-
-      setTimeout(shoot, 0);
-      setTimeout(shoot, 100);
-      setTimeout(shoot, 200);
     }
   };
 
@@ -207,9 +169,9 @@ Prepared by students of Batch 2024 – AI Section A & B
         transition={{ duration: 0.5 }}
       >
         <ShimmerCard>
-          <Card className="border-2 border-[#EEEEEE] dark:border-gray-700 dark:bg-gray-800">
-            <CardHeader className="bg-[#EEEEEE] dark:bg-gray-700 p-4 sm:p-6">
-              <CardTitle className="font-jakarta font-semibold text-[#000000] dark:text-white text-lg sm:text-xl">
+          <Card className="border-2 border-[#EEEEEE]">
+            <CardHeader className="bg-[#EEEEEE] p-4 sm:p-6">
+              <CardTitle className="font-jakarta font-semibold text-[#000000] text-lg sm:text-xl">
                 Number of Subjects
               </CardTitle>
             </CardHeader>
@@ -220,7 +182,7 @@ Prepared by students of Batch 2024 – AI Section A & B
                     variant="outline"
                     role="combobox"
                     aria-expanded={open}
-                    className="w-full justify-between border-[#979797] focus:border-[#0088CC] dark:border-gray-600 dark:bg-gray-700 dark:text-white h-12 text-base"
+                    className="w-full justify-between border-[#979797] focus:border-[#0088CC] h-12 text-base"
                   >
                     {subjectCount
                       ? subjectOptions.find((option) => option.value === subjectCount)?.label
@@ -228,8 +190,8 @@ Prepared by students of Batch 2024 – AI Section A & B
                     <ChevronsUpDown className="opacity-50" />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-full p-0 dark:bg-gray-800 dark:border-gray-600">
-                  <Command className="dark:bg-gray-800">
+                <PopoverContent className="w-full p-0">
+                  <Command>
                     <CommandList>
                       <CommandEmpty>No subjects found.</CommandEmpty>
                       <CommandGroup>
@@ -241,7 +203,6 @@ Prepared by students of Batch 2024 – AI Section A & B
                               setSubjectCount(option.value === subjectCount ? null : option.value);
                               setOpen(false);
                             }}
-                            className="dark:hover:bg-gray-700 dark:text-white"
                           >
                             {option.label}
                             <Check
@@ -270,9 +231,9 @@ Prepared by students of Batch 2024 – AI Section A & B
           transition={{ duration: 0.5, delay: 0.1 }}
         >
           <ShimmerCard>
-            <Card className="border-2 border-[#EEEEEE] dark:border-gray-700 dark:bg-gray-800">
-              <CardHeader className="bg-[#EEEEEE] dark:bg-gray-700 p-4 sm:p-6">
-                <CardTitle className="font-jakarta font-semibold text-[#000000] dark:text-white text-lg sm:text-xl flex items-center">
+            <Card className="border-2 border-[#EEEEEE]">
+              <CardHeader className="bg-[#EEEEEE] p-4 sm:p-6">
+                <CardTitle className="font-jakarta font-semibold text-[#000000] text-lg sm:text-xl flex items-center">
                   <BookOpen size={20} className="mr-2 text-[#0088CC]" />
                   Subject Details
                 </CardTitle>
@@ -288,14 +249,14 @@ Prepared by students of Batch 2024 – AI Section A & B
                       className="relative overflow-hidden"
                     >
                       <div className="absolute inset-0 bg-gradient-to-r from-[#0088CC]/5 via-transparent to-[#0088CC]/5 rounded-lg"></div>
-                      <div className="relative bg-white dark:bg-gray-700 p-4 rounded-lg border border-[#EEEEEE] dark:border-gray-600 space-y-4">
+                      <div className="relative bg-white p-4 rounded-lg border border-[#EEEEEE] space-y-4">
                         <div className="text-sm font-medium text-[#0088CC] font-jakarta">
                           Subject {index + 1}
                         </div>
                         
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                           <div>
-                            <Label className="font-inter text-[#000000] dark:text-white text-sm flex items-center mb-2">
+                            <Label className="font-inter text-[#000000] text-sm flex items-center mb-2">
                               <BookOpen size={16} className="mr-1 text-[#979797]" />
                               Subject Name
                             </Label>
@@ -303,11 +264,11 @@ Prepared by students of Batch 2024 – AI Section A & B
                               value={subject.name}
                               onChange={(e) => updateSubject(subject.id, 'name', e.target.value)}
                               placeholder="Enter subject name"
-                              className="border-[#979797] focus:border-[#0088CC] text-sm sm:text-base dark:bg-gray-600 dark:border-gray-500 dark:text-white"
+                              className="border-[#979797] focus:border-[#0088CC] text-sm sm:text-base"
                             />
                           </div>
                           <div>
-                            <Label className="font-inter text-[#000000] dark:text-white text-sm flex items-center mb-2">
+                            <Label className="font-inter text-[#000000] text-sm flex items-center mb-2">
                               <Hash size={16} className="mr-1 text-[#979797]" />
                               Marks (out of 100)
                             </Label>
@@ -317,18 +278,18 @@ Prepared by students of Batch 2024 – AI Section A & B
                               max="100"
                               value={subject.marks}
                               onChange={(e) => updateSubject(subject.id, 'marks', Number(e.target.value))}
-                              className="border-[#979797] focus:border-[#0088CC] text-sm sm:text-base dark:bg-gray-600 dark:border-gray-500 dark:text-white"
+                              className="border-[#979797] focus:border-[#0088CC] text-sm sm:text-base"
                             />
                           </div>
                           <div>
-                            <Label className="font-inter text-[#000000] dark:text-white text-sm flex items-center mb-2">
+                            <Label className="font-inter text-[#000000] text-sm flex items-center mb-2">
                               <Award size={16} className="mr-1 text-[#979797]" />
                               Credit Hours
                             </Label>
                             <select
                               value={subject.creditHours}
                               onChange={(e) => updateSubject(subject.id, 'creditHours', Number(e.target.value))}
-                              className="w-full h-10 px-3 border border-[#979797] rounded-md focus:border-[#0088CC] focus:outline-none text-sm sm:text-base dark:bg-gray-600 dark:border-gray-500 dark:text-white"
+                              className="w-full h-10 px-3 border border-[#979797] rounded-md focus:border-[#0088CC] focus:outline-none text-sm sm:text-base"
                             >
                               <option value={1}>1</option>
                               <option value={2}>2</option>
@@ -349,7 +310,7 @@ Prepared by students of Batch 2024 – AI Section A & B
                 >
                   <Button
                     onClick={calculateResult}
-                    className="bg-[#000000] hover:bg-[#333333] text-white font-inter w-full h-12 text-base dark:bg-gray-900 dark:hover:bg-gray-800 transition-all duration-200"
+                    className="bg-[#000000] hover:bg-[#333333] text-white font-inter w-full h-12 text-base transition-all duration-200"
                   >
                     Calculate GPA
                   </Button>
