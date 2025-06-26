@@ -68,27 +68,58 @@ const CGPACalculator = () => {
   };
 
   const exportToPDF = () => {
+    if (!result) return;
+    
+    // Create PDF content
+    const pdfContent = `
+UoH CGPA Calculator Results
+==========================
+
+CGPA: ${result.gpa.toFixed(2)}
+Grade: ${result.grade}
+Remarks: ${result.remarks}
+
+Semester Details:
+${semesters.map((semester, index) => 
+  `${index + 1}. ${semester.name}: GPA ${semester.gpa.toFixed(2)} (${semester.totalCreditHours} credit hours)`
+).join('\n')}
+
+Generated on: ${new Date().toLocaleDateString()}
+Prepared by students of Batch 2024 – AI Section A & B
+    `;
+
+    // Create and download the file
+    const blob = new Blob([pdfContent], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `CGPA_Results_${new Date().toISOString().split('T')[0]}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
     toast({
-      title: "Export Feature",
-      description: "PDF export functionality will be implemented soon!",
+      title: "Export Complete",
+      description: "Your CGPA results have been downloaded as a text file.",
     });
     setShowModal(false);
   };
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <Card className="border-2 border-[#EEEEEE]">
-        <CardHeader className="bg-[#EEEEEE] p-4 sm:p-6">
-          <CardTitle className="font-jakarta font-semibold text-[#000000] text-lg sm:text-xl flex items-center">
+      <Card className="border-2 border-[#EEEEEE] dark:border-gray-700 dark:bg-gray-800">
+        <CardHeader className="bg-[#EEEEEE] dark:bg-gray-700 p-4 sm:p-6">
+          <CardTitle className="font-jakarta font-semibold text-[#000000] dark:text-white text-lg sm:text-xl flex items-center">
             <GraduationCap size={20} className="mr-2 text-[#0088CC]" />
             Add Semesters
           </CardTitle>
         </CardHeader>
         <CardContent className="p-4 sm:p-6 space-y-4">
           {semesters.map((semester, index) => (
-            <div key={semester.id} className="space-y-3 sm:space-y-0 sm:grid sm:grid-cols-4 sm:gap-4 p-3 sm:p-4 border border-[#EEEEEE] rounded-lg">
+            <div key={semester.id} className="space-y-3 sm:space-y-0 sm:grid sm:grid-cols-4 sm:gap-4 p-3 sm:p-4 border border-[#EEEEEE] dark:border-gray-600 rounded-lg dark:bg-gray-700">
               <div>
-                <Label className="font-inter text-[#000000] text-sm flex items-center mb-2">
+                <Label className="font-inter text-[#000000] dark:text-white text-sm flex items-center mb-2">
                   <BookOpen size={16} className="mr-1 text-[#979797]" />
                   Semester Name
                 </Label>
@@ -96,11 +127,11 @@ const CGPACalculator = () => {
                   value={semester.name}
                   onChange={(e) => updateSemester(semester.id, 'name', e.target.value)}
                   placeholder="Enter semester name"
-                  className="border-[#979797] focus:border-[#0088CC] text-sm sm:text-base"
+                  className="border-[#979797] focus:border-[#0088CC] text-sm sm:text-base dark:bg-gray-600 dark:border-gray-500 dark:text-white"
                 />
               </div>
               <div>
-                <Label className="font-inter text-[#000000] text-sm flex items-center mb-2">
+                <Label className="font-inter text-[#000000] dark:text-white text-sm flex items-center mb-2">
                   <Target size={16} className="mr-1 text-[#979797]" />
                   GPA (0-4)
                 </Label>
@@ -111,11 +142,11 @@ const CGPACalculator = () => {
                   step="0.01"
                   value={semester.gpa}
                   onChange={(e) => updateSemester(semester.id, 'gpa', Number(e.target.value))}
-                  className="border-[#979797] focus:border-[#0088CC] text-sm sm:text-base"
+                  className="border-[#979797] focus:border-[#0088CC] text-sm sm:text-base dark:bg-gray-600 dark:border-gray-500 dark:text-white"
                 />
               </div>
               <div>
-                <Label className="font-inter text-[#000000] text-sm mb-2 block">
+                <Label className="font-inter text-[#000000] dark:text-white text-sm mb-2 block">
                   Total Credit Hours
                 </Label>
                 <Input
@@ -123,7 +154,7 @@ const CGPACalculator = () => {
                   min="1"
                   value={semester.totalCreditHours}
                   onChange={(e) => updateSemester(semester.id, 'totalCreditHours', Number(e.target.value))}
-                  className="border-[#979797] focus:border-[#0088CC] text-sm sm:text-base"
+                  className="border-[#979797] focus:border-[#0088CC] text-sm sm:text-base dark:bg-gray-600 dark:border-gray-500 dark:text-white"
                 />
               </div>
               <div className="flex items-end">
@@ -132,7 +163,7 @@ const CGPACalculator = () => {
                   size="sm"
                   onClick={() => removeSemester(semester.id)}
                   disabled={semesters.length === 1}
-                  className="border-[#979797] text-[#979797] hover:bg-[#EEEEEE] w-full sm:w-auto"
+                  className="border-[#979797] text-[#979797] hover:bg-[#EEEEEE] dark:border-gray-500 dark:text-gray-400 dark:hover:bg-gray-600 w-full sm:w-auto"
                 >
                   <Trash2 size={16} />
                 </Button>
@@ -150,7 +181,7 @@ const CGPACalculator = () => {
             </Button>
             <Button
               onClick={calculateResult}
-              className="bg-[#000000] hover:bg-[#333333] text-white font-inter flex-1 h-12"
+              className="bg-[#000000] hover:bg-[#333333] text-white font-inter flex-1 h-12 dark:bg-gray-900 dark:hover:bg-gray-800"
             >
               Calculate CGPA
             </Button>

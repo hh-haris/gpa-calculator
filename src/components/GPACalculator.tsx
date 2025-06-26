@@ -4,13 +4,25 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Plus, Trash2, BookOpen, Hash, Award } from 'lucide-react';
+import { Check, ChevronsUpDown, BookOpen, Hash, Award } from 'lucide-react';
+import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
 import { Subject, calculateGPA, getGPAPercentage, getLetterGrade, getRemarks } from '@/utils/gradeCalculations';
 import { useToast } from '@/hooks/use-toast';
 import ResultModal from './ResultModal';
 
+const subjectOptions = [
+  { value: 4, label: "4 Subjects" },
+  { value: 5, label: "5 Subjects" },
+  { value: 6, label: "6 Subjects" },
+  { value: 7, label: "7 Subjects" },
+  { value: 8, label: "8 Subjects" },
+];
+
 const GPACalculator = () => {
-  const [subjectCount, setSubjectCount] = useState<number>(4);
+  const [open, setOpen] = useState(false);
+  const [subjectCount, setSubjectCount] = useState<number | null>(null);
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [result, setResult] = useState<null | {
     gpa: number;
@@ -22,13 +34,17 @@ const GPACalculator = () => {
 
   // Initialize subjects based on count
   useEffect(() => {
-    const newSubjects = Array.from({ length: subjectCount }, (_, index) => ({
-      id: (index + 1).toString(),
-      name: '',
-      marks: 0,
-      creditHours: 1
-    }));
-    setSubjects(newSubjects);
+    if (subjectCount) {
+      const newSubjects = Array.from({ length: subjectCount }, (_, index) => ({
+        id: (index + 1).toString(),
+        name: '',
+        marks: 0,
+        creditHours: 1
+      }));
+      setSubjects(newSubjects);
+    } else {
+      setSubjects([]);
+    }
   }, [subjectCount]);
 
   const updateSubject = (id: string, field: keyof Subject, value: string | number) => {
@@ -70,9 +86,40 @@ const GPACalculator = () => {
   };
 
   const exportToPDF = () => {
+    if (!result) return;
+    
+    // Create PDF content
+    const pdfContent = `
+UoH GPA Calculator Results
+========================
+
+GPA: ${result.gpa.toFixed(2)}
+Grade: ${result.grade}
+Remarks: ${result.remarks}
+
+Subject Details:
+${subjects.map((subject, index) => 
+  `${index + 1}. ${subject.name}: ${subject.marks}/100 (${subject.creditHours} credit hours)`
+).join('\n')}
+
+Generated on: ${new Date().toLocaleDateString()}
+Prepared by students of Batch 2024 – AI Section A & B
+    `;
+
+    // Create and download the file
+    const blob = new Blob([pdfContent], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `GPA_Results_${new Date().toISOString().split('T')[0]}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
     toast({
-      title: "Export Feature",
-      description: "PDF export functionality will be implemented soon!",
+      title: "Export Complete",
+      description: "Your GPA results have been downloaded as a text file.",
     });
     setShowModal(false);
   };
@@ -80,98 +127,127 @@ const GPACalculator = () => {
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* Subject Count Selection */}
-      <Card className="border-2 border-[#EEEEEE]">
-        <CardHeader className="bg-[#EEEEEE] p-4 sm:p-6">
-          <CardTitle className="font-jakarta font-semibold text-[#000000] text-lg sm:text-xl">
+      <Card className="border-2 border-[#EEEEEE] dark:border-gray-700 dark:bg-gray-800">
+        <CardHeader className="bg-[#EEEEEE] dark:bg-gray-700 p-4 sm:p-6">
+          <CardTitle className="font-jakarta font-semibold text-[#000000] dark:text-white text-lg sm:text-xl">
             Number of Subjects
           </CardTitle>
         </CardHeader>
         <CardContent className="p-4 sm:p-6">
-          <div className="grid grid-cols-5 gap-2 sm:gap-3">
-            {[4, 5, 6, 7, 8].map((count) => (
+          <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger asChild>
               <Button
-                key={count}
-                onClick={() => setSubjectCount(count)}
-                className={`h-12 sm:h-14 text-sm sm:text-base font-inter ${
-                  subjectCount === count
-                    ? 'bg-[#0088CC] text-white'
-                    : 'bg-[#EEEEEE] text-[#979797] hover:bg-[#0088CC] hover:text-white'
-                }`}
-                variant="ghost"
+                variant="outline"
+                role="combobox"
+                aria-expanded={open}
+                className="w-full justify-between border-[#979797] focus:border-[#0088CC] dark:border-gray-600 dark:bg-gray-700 dark:text-white"
               >
-                {count}
+                {subjectCount
+                  ? subjectOptions.find((option) => option.value === subjectCount)?.label
+                  : "Select number of subjects..."}
+                <ChevronsUpDown className="opacity-50" />
               </Button>
-            ))}
-          </div>
+            </PopoverTrigger>
+            <PopoverContent className="w-full p-0 dark:bg-gray-800 dark:border-gray-600">
+              <Command className="dark:bg-gray-800">
+                <CommandList>
+                  <CommandEmpty>No subjects found.</CommandEmpty>
+                  <CommandGroup>
+                    {subjectOptions.map((option) => (
+                      <CommandItem
+                        key={option.value}
+                        value={option.value.toString()}
+                        onSelect={() => {
+                          setSubjectCount(option.value === subjectCount ? null : option.value);
+                          setOpen(false);
+                        }}
+                        className="dark:hover:bg-gray-700 dark:text-white"
+                      >
+                        {option.label}
+                        <Check
+                          className={cn(
+                            "ml-auto",
+                            subjectCount === option.value ? "opacity-100" : "opacity-0"
+                          )}
+                        />
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
         </CardContent>
       </Card>
 
-      {/* Subjects Input */}
-      <Card className="border-2 border-[#EEEEEE]">
-        <CardHeader className="bg-[#EEEEEE] p-4 sm:p-6">
-          <CardTitle className="font-jakarta font-semibold text-[#000000] text-lg sm:text-xl flex items-center">
-            <BookOpen size={20} className="mr-2 text-[#0088CC]" />
-            Subject Details
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-4 sm:p-6 space-y-4">
-          {subjects.map((subject, index) => (
-            <div key={subject.id} className="space-y-3 sm:space-y-0 sm:grid sm:grid-cols-3 sm:gap-4 p-3 sm:p-4 border border-[#EEEEEE] rounded-lg">
-              <div>
-                <Label className="font-inter text-[#000000] text-sm flex items-center mb-2">
-                  <BookOpen size={16} className="mr-1 text-[#979797]" />
-                  Subject {index + 1} Name
-                </Label>
-                <Input
-                  value={subject.name}
-                  onChange={(e) => updateSubject(subject.id, 'name', e.target.value)}
-                  placeholder="Enter subject name"
-                  className="border-[#979797] focus:border-[#0088CC] text-sm sm:text-base"
-                />
+      {/* Subjects Input - Only show when subject count is selected */}
+      {subjectCount && (
+        <Card className="border-2 border-[#EEEEEE] dark:border-gray-700 dark:bg-gray-800">
+          <CardHeader className="bg-[#EEEEEE] dark:bg-gray-700 p-4 sm:p-6">
+            <CardTitle className="font-jakarta font-semibold text-[#000000] dark:text-white text-lg sm:text-xl flex items-center">
+              <BookOpen size={20} className="mr-2 text-[#0088CC]" />
+              Subject Details
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-4 sm:p-6 space-y-4">
+            {subjects.map((subject, index) => (
+              <div key={subject.id} className="space-y-3 sm:space-y-0 sm:grid sm:grid-cols-3 sm:gap-4 p-3 sm:p-4 border border-[#EEEEEE] dark:border-gray-600 rounded-lg dark:bg-gray-700">
+                <div>
+                  <Label className="font-inter text-[#000000] dark:text-white text-sm flex items-center mb-2">
+                    <BookOpen size={16} className="mr-1 text-[#979797]" />
+                    Subject {index + 1} Name
+                  </Label>
+                  <Input
+                    value={subject.name}
+                    onChange={(e) => updateSubject(subject.id, 'name', e.target.value)}
+                    placeholder="Enter subject name"
+                    className="border-[#979797] focus:border-[#0088CC] text-sm sm:text-base dark:bg-gray-600 dark:border-gray-500 dark:text-white"
+                  />
+                </div>
+                <div>
+                  <Label className="font-inter text-[#000000] dark:text-white text-sm flex items-center mb-2">
+                    <Hash size={16} className="mr-1 text-[#979797]" />
+                    Marks (out of 100)
+                  </Label>
+                  <Input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={subject.marks}
+                    onChange={(e) => updateSubject(subject.id, 'marks', Number(e.target.value))}
+                    className="border-[#979797] focus:border-[#0088CC] text-sm sm:text-base dark:bg-gray-600 dark:border-gray-500 dark:text-white"
+                  />
+                </div>
+                <div>
+                  <Label className="font-inter text-[#000000] dark:text-white text-sm flex items-center mb-2">
+                    <Award size={16} className="mr-1 text-[#979797]" />
+                    Credit Hours
+                  </Label>
+                  <select
+                    value={subject.creditHours}
+                    onChange={(e) => updateSubject(subject.id, 'creditHours', Number(e.target.value))}
+                    className="w-full h-10 px-3 border border-[#979797] rounded-md focus:border-[#0088CC] focus:outline-none text-sm sm:text-base dark:bg-gray-600 dark:border-gray-500 dark:text-white"
+                  >
+                    <option value={1}>1</option>
+                    <option value={2}>2</option>
+                    <option value={3}>3</option>
+                    <option value={4}>4</option>
+                  </select>
+                </div>
               </div>
-              <div>
-                <Label className="font-inter text-[#000000] text-sm flex items-center mb-2">
-                  <Hash size={16} className="mr-1 text-[#979797]" />
-                  Marks (out of 100)
-                </Label>
-                <Input
-                  type="number"
-                  min="0"
-                  max="100"
-                  value={subject.marks}
-                  onChange={(e) => updateSubject(subject.id, 'marks', Number(e.target.value))}
-                  className="border-[#979797] focus:border-[#0088CC] text-sm sm:text-base"
-                />
-              </div>
-              <div>
-                <Label className="font-inter text-[#000000] text-sm flex items-center mb-2">
-                  <Award size={16} className="mr-1 text-[#979797]" />
-                  Credit Hours
-                </Label>
-                <select
-                  value={subject.creditHours}
-                  onChange={(e) => updateSubject(subject.id, 'creditHours', Number(e.target.value))}
-                  className="w-full h-10 px-3 border border-[#979797] rounded-md focus:border-[#0088CC] focus:outline-none text-sm sm:text-base"
-                >
-                  <option value={1}>1</option>
-                  <option value={2}>2</option>
-                  <option value={3}>3</option>
-                  <option value={4}>4</option>
-                </select>
-              </div>
+            ))}
+            
+            <div className="pt-4">
+              <Button
+                onClick={calculateResult}
+                className="bg-[#000000] hover:bg-[#333333] text-white font-inter w-full h-12 text-base dark:bg-gray-900 dark:hover:bg-gray-800"
+              >
+                Calculate GPA
+              </Button>
             </div>
-          ))}
-          
-          <div className="pt-4">
-            <Button
-              onClick={calculateResult}
-              className="bg-[#000000] hover:bg-[#333333] text-white font-inter w-full h-12 text-base"
-            >
-              Calculate GPA
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
 
       <ResultModal
         isOpen={showModal}

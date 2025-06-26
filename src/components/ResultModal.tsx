@@ -21,18 +21,18 @@ const ResultModal = ({ isOpen, onClose, result, onExport }: ResultModalProps) =>
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop with blur */}
       <div 
-        className="absolute inset-0 bg-black/20 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/20 backdrop-blur-sm dark:bg-black/40"
         onClick={onClose}
       />
       
       {/* Modal Content */}
-      <div className="relative bg-white/80 backdrop-blur-md border border-white/30 rounded-xl shadow-2xl max-w-md w-full mx-4 p-6">
+      <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border border-white/30 dark:border-gray-600/30 rounded-xl shadow-2xl max-w-md w-full mx-4 p-6">
         {/* Close Button */}
         <Button
           onClick={onClose}
           variant="ghost"
           size="sm"
-          className="absolute top-4 right-4 text-[#979797] hover:text-[#000000]"
+          className="absolute top-4 right-4 text-[#979797] hover:text-[#000000] dark:text-gray-400 dark:hover:text-white"
         >
           <X size={20} />
         </Button>
@@ -46,34 +46,34 @@ const ResultModal = ({ isOpen, onClose, result, onExport }: ResultModalProps) =>
 
         {/* Results */}
         <div className="space-y-4 mb-6">
-          <div className="bg-white/50 p-4 rounded-lg border border-white/20 text-center">
+          <div className="bg-white/50 dark:bg-gray-700/50 p-4 rounded-lg border border-white/20 dark:border-gray-600/20 text-center">
             <div className="flex items-center justify-center mb-2">
               <Target className="text-[#0088CC] mr-2" size={20} />
             </div>
             <div className="text-2xl font-bold text-[#0088CC] font-jakarta">
               {result.gpa.toFixed(2)}
             </div>
-            <div className="text-[#979797] font-inter text-sm">GPA</div>
+            <div className="text-[#979797] dark:text-gray-400 font-inter text-sm">GPA</div>
           </div>
           
-          <div className="bg-white/50 p-4 rounded-lg border border-white/20 text-center">
+          <div className="bg-white/50 dark:bg-gray-700/50 p-4 rounded-lg border border-white/20 dark:border-gray-600/20 text-center">
             <div className="flex items-center justify-center mb-2">
-              <Award className="text-[#000000] mr-2" size={20} />
+              <Award className="text-[#000000] dark:text-white mr-2" size={20} />
             </div>
-            <div className="text-2xl font-bold text-[#000000] font-jakarta">
+            <div className="text-2xl font-bold text-[#000000] dark:text-white font-jakarta">
               {result.grade}
             </div>
-            <div className="text-[#979797] font-inter text-sm">Grade</div>
+            <div className="text-[#979797] dark:text-gray-400 font-inter text-sm">Grade</div>
           </div>
           
-          <div className="bg-white/50 p-4 rounded-lg border border-white/20 text-center">
+          <div className="bg-white/50 dark:bg-gray-700/50 p-4 rounded-lg border border-white/20 dark:border-gray-600/20 text-center">
             <div className="flex items-center justify-center mb-2">
-              <MessageSquare className="text-[#000000] mr-2" size={20} />
+              <MessageSquare className="text-[#000000] dark:text-white mr-2" size={20} />
             </div>
-            <div className="text-lg font-bold text-[#000000] font-jakarta">
+            <div className="text-lg font-bold text-[#000000] dark:text-white font-jakarta">
               {result.remarks}
             </div>
-            <div className="text-[#979797] font-inter text-sm">Remarks</div>
+            <div className="text-[#979797] dark:text-gray-400 font-inter text-sm">Remarks</div>
           </div>
         </div>
         
