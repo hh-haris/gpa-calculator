@@ -11,6 +11,9 @@ import { cn } from '@/lib/utils';
 import { Subject, calculateGPA, getGPAPercentage, getLetterGrade, getRemarks } from '@/utils/gradeCalculations';
 import { useToast } from '@/hooks/use-toast';
 import ResultModal from './ResultModal';
+import ShimmerCard from './ShimmerCard';
+import { motion } from 'framer-motion';
+import confetti from 'canvas-confetti';
 
 const subjectOptions = [
   { value: 4, label: "4 Subjects" },
@@ -32,7 +35,6 @@ const GPACalculator = () => {
   const [showModal, setShowModal] = useState(false);
   const { toast } = useToast();
 
-  // Initialize subjects based on count
   useEffect(() => {
     if (subjectCount) {
       const newSubjects = Array.from({ length: subjectCount }, (_, index) => ({
@@ -46,6 +48,75 @@ const GPACalculator = () => {
       setSubjects([]);
     }
   }, [subjectCount]);
+
+  const triggerConfetti = (gpa: number) => {
+    if (gpa >= 3) {
+      // Success confetti
+      const end = Date.now() + 2000;
+      const colors = ["#0088CC", "#00AA88", "#0066CC", "#4CAF50"];
+
+      const frame = () => {
+        if (Date.now() > end) return;
+
+        confetti({
+          particleCount: 2,
+          angle: 60,
+          spread: 55,
+          startVelocity: 60,
+          origin: { x: 0, y: 0.5 },
+          colors: colors,
+        });
+        confetti({
+          particleCount: 2,
+          angle: 120,
+          spread: 55,
+          startVelocity: 60,
+          origin: { x: 1, y: 0.5 },
+          colors: colors,
+        });
+
+        requestAnimationFrame(frame);
+      };
+      frame();
+    } else if (gpa < 2) {
+      // Warning emoji confetti
+      const scalar = 2;
+      const handEmoji = confetti.shapeFromText({ text: "✋", scalar });
+
+      const defaults = {
+        spread: 360,
+        ticks: 60,
+        gravity: 0,
+        decay: 0.96,
+        startVelocity: 20,
+        shapes: [handEmoji],
+        scalar,
+      };
+
+      const shoot = () => {
+        confetti({
+          ...defaults,
+          particleCount: 15,
+        });
+
+        confetti({
+          ...defaults,
+          particleCount: 3,
+        });
+
+        confetti({
+          ...defaults,
+          particleCount: 8,
+          scalar: scalar / 2,
+          shapes: ["circle"],
+        });
+      };
+
+      setTimeout(shoot, 0);
+      setTimeout(shoot, 100);
+      setTimeout(shoot, 200);
+    }
+  };
 
   const updateSubject = (id: string, field: keyof Subject, value: string | number) => {
     setSubjects(subjects.map(subject => 
@@ -83,6 +154,9 @@ const GPACalculator = () => {
 
     setResult({ gpa, grade, remarks });
     setShowModal(true);
+    
+    // Trigger confetti after a short delay
+    setTimeout(() => triggerConfetti(gpa), 500);
   };
 
   const exportToPDF = () => {
@@ -127,126 +201,163 @@ Prepared by students of Batch 2024 – AI Section A & B
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* Subject Count Selection */}
-      <Card className="border-2 border-[#EEEEEE] dark:border-gray-700 dark:bg-gray-800">
-        <CardHeader className="bg-[#EEEEEE] dark:bg-gray-700 p-4 sm:p-6">
-          <CardTitle className="font-jakarta font-semibold text-[#000000] dark:text-white text-lg sm:text-xl">
-            Number of Subjects
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-4 sm:p-6">
-          <Popover open={open} onOpenChange={setOpen}>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                role="combobox"
-                aria-expanded={open}
-                className="w-full justify-between border-[#979797] focus:border-[#0088CC] dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-              >
-                {subjectCount
-                  ? subjectOptions.find((option) => option.value === subjectCount)?.label
-                  : "Select number of subjects..."}
-                <ChevronsUpDown className="opacity-50" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-full p-0 dark:bg-gray-800 dark:border-gray-600">
-              <Command className="dark:bg-gray-800">
-                <CommandList>
-                  <CommandEmpty>No subjects found.</CommandEmpty>
-                  <CommandGroup>
-                    {subjectOptions.map((option) => (
-                      <CommandItem
-                        key={option.value}
-                        value={option.value.toString()}
-                        onSelect={() => {
-                          setSubjectCount(option.value === subjectCount ? null : option.value);
-                          setOpen(false);
-                        }}
-                        className="dark:hover:bg-gray-700 dark:text-white"
-                      >
-                        {option.label}
-                        <Check
-                          className={cn(
-                            "ml-auto",
-                            subjectCount === option.value ? "opacity-100" : "opacity-0"
-                          )}
-                        />
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                </CommandList>
-              </Command>
-            </PopoverContent>
-          </Popover>
-        </CardContent>
-      </Card>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <ShimmerCard>
+          <Card className="border-2 border-[#EEEEEE] dark:border-gray-700 dark:bg-gray-800">
+            <CardHeader className="bg-[#EEEEEE] dark:bg-gray-700 p-4 sm:p-6">
+              <CardTitle className="font-jakarta font-semibold text-[#000000] dark:text-white text-lg sm:text-xl">
+                Number of Subjects
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-4 sm:p-6">
+              <Popover open={open} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={open}
+                    className="w-full justify-between border-[#979797] focus:border-[#0088CC] dark:border-gray-600 dark:bg-gray-700 dark:text-white h-12 text-base"
+                  >
+                    {subjectCount
+                      ? subjectOptions.find((option) => option.value === subjectCount)?.label
+                      : "Select number of subjects..."}
+                    <ChevronsUpDown className="opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-0 dark:bg-gray-800 dark:border-gray-600">
+                  <Command className="dark:bg-gray-800">
+                    <CommandList>
+                      <CommandEmpty>No subjects found.</CommandEmpty>
+                      <CommandGroup>
+                        {subjectOptions.map((option) => (
+                          <CommandItem
+                            key={option.value}
+                            value={option.value.toString()}
+                            onSelect={() => {
+                              setSubjectCount(option.value === subjectCount ? null : option.value);
+                              setOpen(false);
+                            }}
+                            className="dark:hover:bg-gray-700 dark:text-white"
+                          >
+                            {option.label}
+                            <Check
+                              className={cn(
+                                "ml-auto",
+                                subjectCount === option.value ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+            </CardContent>
+          </Card>
+        </ShimmerCard>
+      </motion.div>
 
       {/* Subjects Input - Only show when subject count is selected */}
       {subjectCount && (
-        <Card className="border-2 border-[#EEEEEE] dark:border-gray-700 dark:bg-gray-800">
-          <CardHeader className="bg-[#EEEEEE] dark:bg-gray-700 p-4 sm:p-6">
-            <CardTitle className="font-jakarta font-semibold text-[#000000] dark:text-white text-lg sm:text-xl flex items-center">
-              <BookOpen size={20} className="mr-2 text-[#0088CC]" />
-              Subject Details
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 sm:p-6 space-y-4">
-            {subjects.map((subject, index) => (
-              <div key={subject.id} className="space-y-3 sm:space-y-0 sm:grid sm:grid-cols-3 sm:gap-4 p-3 sm:p-4 border border-[#EEEEEE] dark:border-gray-600 rounded-lg dark:bg-gray-700">
-                <div>
-                  <Label className="font-inter text-[#000000] dark:text-white text-sm flex items-center mb-2">
-                    <BookOpen size={16} className="mr-1 text-[#979797]" />
-                    Subject {index + 1} Name
-                  </Label>
-                  <Input
-                    value={subject.name}
-                    onChange={(e) => updateSubject(subject.id, 'name', e.target.value)}
-                    placeholder="Enter subject name"
-                    className="border-[#979797] focus:border-[#0088CC] text-sm sm:text-base dark:bg-gray-600 dark:border-gray-500 dark:text-white"
-                  />
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+        >
+          <ShimmerCard>
+            <Card className="border-2 border-[#EEEEEE] dark:border-gray-700 dark:bg-gray-800">
+              <CardHeader className="bg-[#EEEEEE] dark:bg-gray-700 p-4 sm:p-6">
+                <CardTitle className="font-jakarta font-semibold text-[#000000] dark:text-white text-lg sm:text-xl flex items-center">
+                  <BookOpen size={20} className="mr-2 text-[#0088CC]" />
+                  Subject Details
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4 sm:p-6">
+                <div className="grid gap-4 sm:gap-6">
+                  {subjects.map((subject, index) => (
+                    <motion.div
+                      key={subject.id}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.3, delay: index * 0.1 }}
+                      className="relative overflow-hidden"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-[#0088CC]/5 via-transparent to-[#0088CC]/5 rounded-lg"></div>
+                      <div className="relative bg-white dark:bg-gray-700 p-4 rounded-lg border border-[#EEEEEE] dark:border-gray-600 space-y-4">
+                        <div className="text-sm font-medium text-[#0088CC] font-jakarta">
+                          Subject {index + 1}
+                        </div>
+                        
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                          <div>
+                            <Label className="font-inter text-[#000000] dark:text-white text-sm flex items-center mb-2">
+                              <BookOpen size={16} className="mr-1 text-[#979797]" />
+                              Subject Name
+                            </Label>
+                            <Input
+                              value={subject.name}
+                              onChange={(e) => updateSubject(subject.id, 'name', e.target.value)}
+                              placeholder="Enter subject name"
+                              className="border-[#979797] focus:border-[#0088CC] text-sm sm:text-base dark:bg-gray-600 dark:border-gray-500 dark:text-white"
+                            />
+                          </div>
+                          <div>
+                            <Label className="font-inter text-[#000000] dark:text-white text-sm flex items-center mb-2">
+                              <Hash size={16} className="mr-1 text-[#979797]" />
+                              Marks (out of 100)
+                            </Label>
+                            <Input
+                              type="number"
+                              min="0"
+                              max="100"
+                              value={subject.marks}
+                              onChange={(e) => updateSubject(subject.id, 'marks', Number(e.target.value))}
+                              className="border-[#979797] focus:border-[#0088CC] text-sm sm:text-base dark:bg-gray-600 dark:border-gray-500 dark:text-white"
+                            />
+                          </div>
+                          <div>
+                            <Label className="font-inter text-[#000000] dark:text-white text-sm flex items-center mb-2">
+                              <Award size={16} className="mr-1 text-[#979797]" />
+                              Credit Hours
+                            </Label>
+                            <select
+                              value={subject.creditHours}
+                              onChange={(e) => updateSubject(subject.id, 'creditHours', Number(e.target.value))}
+                              className="w-full h-10 px-3 border border-[#979797] rounded-md focus:border-[#0088CC] focus:outline-none text-sm sm:text-base dark:bg-gray-600 dark:border-gray-500 dark:text-white"
+                            >
+                              <option value={1}>1</option>
+                              <option value={2}>2</option>
+                              <option value={3}>3</option>
+                              <option value={4}>4</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
                 </div>
-                <div>
-                  <Label className="font-inter text-[#000000] dark:text-white text-sm flex items-center mb-2">
-                    <Hash size={16} className="mr-1 text-[#979797]" />
-                    Marks (out of 100)
-                  </Label>
-                  <Input
-                    type="number"
-                    min="0"
-                    max="100"
-                    value={subject.marks}
-                    onChange={(e) => updateSubject(subject.id, 'marks', Number(e.target.value))}
-                    className="border-[#979797] focus:border-[#0088CC] text-sm sm:text-base dark:bg-gray-600 dark:border-gray-500 dark:text-white"
-                  />
-                </div>
-                <div>
-                  <Label className="font-inter text-[#000000] dark:text-white text-sm flex items-center mb-2">
-                    <Award size={16} className="mr-1 text-[#979797]" />
-                    Credit Hours
-                  </Label>
-                  <select
-                    value={subject.creditHours}
-                    onChange={(e) => updateSubject(subject.id, 'creditHours', Number(e.target.value))}
-                    className="w-full h-10 px-3 border border-[#979797] rounded-md focus:border-[#0088CC] focus:outline-none text-sm sm:text-base dark:bg-gray-600 dark:border-gray-500 dark:text-white"
+                
+                <motion.div 
+                  className="pt-6"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Button
+                    onClick={calculateResult}
+                    className="bg-[#000000] hover:bg-[#333333] text-white font-inter w-full h-12 text-base dark:bg-gray-900 dark:hover:bg-gray-800 transition-all duration-200"
                   >
-                    <option value={1}>1</option>
-                    <option value={2}>2</option>
-                    <option value={3}>3</option>
-                    <option value={4}>4</option>
-                  </select>
-                </div>
-              </div>
-            ))}
-            
-            <div className="pt-4">
-              <Button
-                onClick={calculateResult}
-                className="bg-[#000000] hover:bg-[#333333] text-white font-inter w-full h-12 text-base dark:bg-gray-900 dark:hover:bg-gray-800"
-              >
-                Calculate GPA
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+                    Calculate GPA
+                  </Button>
+                </motion.div>
+              </CardContent>
+            </Card>
+          </ShimmerCard>
+        </motion.div>
       )}
 
       <ResultModal
