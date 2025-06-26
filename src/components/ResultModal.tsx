@@ -15,6 +15,18 @@ interface ResultModalProps {
 }
 
 const ResultModal = ({ isOpen, onClose, result, onExport }: ResultModalProps) => {
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
+  const handleCloseClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onClose();
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -24,11 +36,11 @@ const ResultModal = ({ isOpen, onClose, result, onExport }: ResultModalProps) =>
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
+          onClick={handleBackdropClick}
         >
           {/* Backdrop with blur */}
           <motion.div 
             className="absolute inset-0 bg-black/20 backdrop-blur-sm"
-            onClick={onClose}
             initial={{ backdropFilter: "blur(0px)" }}
             animate={{ backdropFilter: "blur(8px)" }}
             exit={{ backdropFilter: "blur(0px)" }}
@@ -41,16 +53,17 @@ const ResultModal = ({ isOpen, onClose, result, onExport }: ResultModalProps) =>
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.9, opacity: 0, y: 20 }}
             transition={{ duration: 0.3, type: "spring", stiffness: 300 }}
+            onClick={(e) => e.stopPropagation()}
           >
             {/* Shimmer effect */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#0088CC]/10 to-transparent animate-pulse"></div>
             
             {/* Close Button */}
             <Button
-              onClick={onClose}
+              onClick={handleCloseClick}
               variant="ghost"
               size="sm"
-              className="absolute top-4 right-4 text-[#979797] hover:text-[#000000] z-10"
+              className="absolute top-4 right-4 text-[#979797] hover:text-[#000000] z-10 h-8 w-8 p-0"
             >
               <X size={20} />
             </Button>

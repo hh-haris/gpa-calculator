@@ -13,6 +13,7 @@ import ResultModal from './ResultModal';
 import ShimmerCard from './ShimmerCard';
 import { motion } from 'framer-motion';
 import confetti from 'canvas-confetti';
+import jsPDF from 'jspdf';
 
 const subjectOptions = [
   { value: 4, label: "4 Subjects" },
@@ -50,28 +51,45 @@ const GPACalculator = () => {
 
   const triggerConfetti = (gpa: number) => {
     if (gpa >= 3) {
-      // Success confetti with reduced density
-      const end = Date.now() + 1500;
-      const colors = ["#0088CC", "#00AA88", "#0066CC", "#4CAF50"];
+      // Colorful confetti with reduced density and shorter duration
+      const duration = 1000; // 1 second
+      const end = Date.now() + duration;
+      const colors = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEAA7", "#DDA0DD", "#98D8C8"];
 
       const frame = () => {
         if (Date.now() > end) return;
 
+        // Left side confetti
         confetti({
-          particleCount: 1,
+          particleCount: 3,
           angle: 60,
-          spread: 45,
-          startVelocity: 45,
-          origin: { x: 0, y: 0.5 },
+          spread: 55,
+          origin: { x: 0, y: 0.6 },
           colors: colors,
+          gravity: 0.8,
+          scalar: 0.8,
         });
+
+        // Right side confetti
         confetti({
-          particleCount: 1,
+          particleCount: 3,
           angle: 120,
-          spread: 45,
-          startVelocity: 45,
-          origin: { x: 1, y: 0.5 },
+          spread: 55,
+          origin: { x: 1, y: 0.6 },
           colors: colors,
+          gravity: 0.8,
+          scalar: 0.8,
+        });
+
+        // Center confetti
+        confetti({
+          particleCount: 2,
+          angle: 90,
+          spread: 45,
+          origin: { x: 0.5, y: 0.6 },
+          colors: colors,
+          gravity: 0.8,
+          scalar: 0.8,
         });
 
         requestAnimationFrame(frame);
@@ -124,40 +142,77 @@ const GPACalculator = () => {
   const exportToPDF = () => {
     if (!result) return;
     
-    // Create PDF content
-    const pdfContent = `
-UoH GPA Calculator Results
-========================
-
-GPA: ${result.gpa.toFixed(2)}
-Grade: ${result.grade}
-Remarks: ${result.remarks}
-
-Subject Details:
-${subjects.map((subject, index) => 
-  `${index + 1}. ${subject.name}: ${subject.marks}/100 (${subject.creditHours} credit hours)`
-).join('\n')}
-
-Generated on: ${new Date().toLocaleDateString()}
-Prepared by students of Batch 2024 – AI Section A & B
-    `;
-
-    // Create and download the file
-    const blob = new Blob([pdfContent], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `GPA_Results_${new Date().toISOString().split('T')[0]}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-
-    toast({
-      title: "Export Complete",
-      description: "Your GPA results have been downloaded as a text file.",
-    });
-    setShowModal(false);
+    try {
+      const doc = new jsPDF();
+      
+      // Set font
+      doc.setFont('helvetica');
+      
+      // Title
+      doc.setFontSize(20);
+      doc.setTextColor(0, 136, 204); // #0088CC
+      doc.text('UoH GPA Calculator Results', 20, 30);
+      
+      // Horizontal line
+      doc.setDrawColor(238, 238, 238); // #EEEEEE
+      doc.line(20, 35, 190, 35);
+      
+      // Results section
+      doc.setFontSize(14);
+      doc.setTextColor(0, 0, 0);
+      doc.text('Results:', 20, 50);
+      
+      doc.setFontSize(12);
+      doc.text(`GPA: ${result.gpa.toFixed(2)}`, 30, 65);
+      doc.text(`Grade: ${result.grade}`, 30, 75);
+      doc.text(`Remarks: ${result.remarks}`, 30, 85);
+      
+      // Subject details section
+      doc.setFontSize(14);
+      doc.text('Subject Details:', 20, 105);
+      
+      doc.setFontSize(10);
+      let yPosition = 120;
+      subjects.forEach((subject, index) => {
+        if (yPosition > 270) { // Check if we need a new page
+          doc.addPage();
+          yPosition = 20;
+        }
+        doc.text(
+          `${index + 1}. ${subject.name}: ${subject.marks}/100 (${subject.creditHours} credit hours)`,
+          30,
+          yPosition
+        );
+        yPosition += 10;
+      });
+      
+      // Footer
+      if (yPosition > 250) {
+        doc.addPage();
+        yPosition = 20;
+      }
+      
+      doc.setFontSize(8);
+      doc.setTextColor(151, 151, 151); // #979797
+      doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, yPosition + 20);
+      doc.text('Prepared by students of Batch 2024 – AI Section A & B', 20, yPosition + 30);
+      
+      // Save the PDF
+      doc.save(`GPA_Results_${new Date().toISOString().split('T')[0]}.pdf`);
+      
+      toast({
+        title: "Export Complete",
+        description: "Your GPA results have been downloaded as a PDF file.",
+      });
+      setShowModal(false);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      toast({
+        title: "Export Error",
+        description: "There was an error generating the PDF. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
