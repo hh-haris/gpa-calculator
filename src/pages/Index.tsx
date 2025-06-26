@@ -57,7 +57,7 @@ const Index = () => {
               </AlertDescription>
             </Alert>
           </motion.div>
-        </div>
+        </motion.div>
 
         {/* Tab Switcher with Animation */}
         <motion.div 
