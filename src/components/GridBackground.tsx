@@ -7,7 +7,7 @@ export function GridBackground() {
     <div className="fixed inset-0 -z-10 bg-white">
       <div
         className={cn(
-          "absolute inset-0 opacity-90",
+          "absolute inset-0 opacity-50",
           "[background-size:20px_20px] sm:[background-size:40px_40px]",
           "[background-image:linear-gradient(to_right,rgba(0,0,0,0.1)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.1)_1px,transparent_1px)]",
         )}
