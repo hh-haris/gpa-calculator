@@ -46,7 +46,7 @@ const Index = () => {
       {/* Sticky Banner */}
       <StickyBanner className="bg-gradient-to-r from-[#0088CC] to-[#0077BB]">
         <p className="mx-0 max-w-[90%] text-white drop-shadow-md font-inter text-xs sm:text-sm">
-          Submit your suggestion to help us make the next semester more fun for everyone — what should we create next?{" "}
+          Got an idea? Let’s build it for next semester!{" "}
         </p>
       </StickyBanner>
 
