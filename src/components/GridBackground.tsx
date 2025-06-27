@@ -9,7 +9,7 @@ export function GridBackground() {
         className={cn(
           "absolute inset-0 opacity-50",
           "[background-size:20px_20px] sm:[background-size:40px_40px]",
-          "[background-image:linear-gradient(to_right,rgba(0,0,0,0.1)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.1)_1px,transparent_1px)]",
+          "[background-image:linear-gradient(to_right,rgba(0,0,0,0.3)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.3)_1px,transparent_1px)]",
         )}
       />
       {/* Subtle radial gradient for center focus */}
