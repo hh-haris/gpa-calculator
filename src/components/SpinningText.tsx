@@ -54,7 +54,7 @@ function SpinningText() {
             }}
             style={{
               width: '160px',
-              height: '120px',
+              height: '170px',
             }}
           >
             {letters.map((letter, index) => (
