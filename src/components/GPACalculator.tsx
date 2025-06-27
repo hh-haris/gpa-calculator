@@ -1,6 +1,4 @@
-
 import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -15,6 +13,8 @@ import ShimmerCard from './ShimmerCard';
 import { motion } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import jsPDF from 'jspdf';
+import { LiquidButton } from '@/components/ui/liquid-button';
+import { Button } from '@/components/ui/stateful-button';
 
 const subjectOptions = [
   { value: 4, label: "4 Subjects" },
@@ -41,7 +41,7 @@ const GPACalculator = () => {
       const newSubjects = Array.from({ length: subjectCount }, (_, index) => ({
         id: (index + 1).toString(),
         name: '',
-        marks: '',
+        marks: '', // Remove default 0
         creditHours: 1
       }));
       setSubjects(newSubjects);
@@ -64,7 +64,7 @@ const GPACalculator = () => {
       canvas.height = window.innerHeight;
       document.body.appendChild(canvas);
 
-      const duration = 800;
+      const duration = 600; // Reduced duration
       const end = Date.now() + duration;
       const colors = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEAA7", "#DDA0DD", "#98D8C8"];
 
@@ -79,24 +79,25 @@ const GPACalculator = () => {
           return;
         }
 
+        // Reduced particle count for lower density
         myConfetti({
-          particleCount: 1,
+          particleCount: 1, // Reduced from 2
           angle: 60,
-          spread: 55,
+          spread: 45, // Reduced spread
           origin: { x: 0, y: 0.6 },
           colors: colors,
-          gravity: 0.8,
-          scalar: 0.8,
+          gravity: 0.9,
+          scalar: 0.7, // Reduced size
         });
 
         myConfetti({
-          particleCount: 1,
+          particleCount: 1, // Reduced from 2
           angle: 120,
-          spread: 55,
+          spread: 45, // Reduced spread
           origin: { x: 1, y: 0.6 },
           colors: colors,
-          gravity: 0.8,
-          scalar: 0.8,
+          gravity: 0.9,
+          scalar: 0.7, // Reduced size
         });
 
         requestAnimationFrame(frame);
@@ -111,7 +112,7 @@ const GPACalculator = () => {
     ));
   };
 
-  const calculateResult = () => {
+  const calculateResult = async () => {
     const validSubjects = subjects.filter(subject => 
       subject.name.trim() !== '' && subject.marks !== '' && Number(subject.marks) >= 0 && Number(subject.marks) <= 100
     );
@@ -133,6 +134,9 @@ const GPACalculator = () => {
       });
       return;
     }
+
+    // Simulate processing time
+    await new Promise(resolve => setTimeout(resolve, 1500));
 
     const processedSubjects = validSubjects.map(subject => ({
       ...subject,
@@ -237,17 +241,16 @@ const GPACalculator = () => {
             <CardContent className="p-4 sm:p-6">
               <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    role="combobox"
-                    aria-expanded={open}
+                  <LiquidButton
+                    variant="default"
+                    size="xxl"
                     className="w-full justify-between border-[#979797] dark:border-gray-600 focus:border-[#0088CC] h-12 text-base"
                   >
                     {subjectCount
                       ? subjectOptions.find((option) => option.value === subjectCount)?.label
                       : "Select number of subjects..."}
                     <ChevronsUpDown className="opacity-50" />
-                  </Button>
+                  </LiquidButton>
                 </PopoverTrigger>
                 <PopoverContent className="w-full p-0">
                   <Command>
@@ -365,21 +368,16 @@ const GPACalculator = () => {
                 </div>
                 
                 <motion.div 
-                  className="pt-6"
+                  className="pt-6 flex justify-center"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.95 }}
                 >
                   <Button
                     onClick={calculateResult}
-                    className="relative overflow-hidden bg-[#000000] hover:bg-[#333333] text-white font-inter w-full h-12 text-base transition-all duration-300 transform-gpu"
-                    style={{
-                      background: 'linear-gradient(45deg, #000000, #333333, #000000)',
-                      backgroundSize: '200% 200%',
-                      animation: 'gradient-shift 3s ease infinite'
-                    }}
+                    className="bg-[#0088CC] hover:bg-[#0077BB] text-white font-inter px-8 py-3 text-lg transition-all duration-300"
+                    loadingText="Calculating..."
                   >
-                    <span className="relative z-10">Calculate GPA</span>
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                    Calculate GPA
                   </Button>
                 </motion.div>
               </CardContent>

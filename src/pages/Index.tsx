@@ -1,11 +1,14 @@
 
 import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import GPACalculator from '@/components/GPACalculator';
 import CGPACalculator from '@/components/CGPACalculator';
-import DarkModeToggle from '@/components/DarkModeToggle';
 import { motion } from 'framer-motion';
+import { GridBackground } from '@/components/ui/grid-background';
+import FluidTabs from '@/components/ui/fluid-tabs';
+import { StickyBanner } from '@/components/ui/sticky-banner';
+import { SpinningText } from '@/components/ui/spinning-text';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState<'gpa' | 'cgpa'>('gpa');
@@ -35,7 +38,17 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 font-inter transition-all duration-300">
+    <GridBackground>
+      {/* Sticky Banner */}
+      <StickyBanner className="bg-gradient-to-r from-blue-500 to-blue-600">
+        <p className="mx-0 max-w-[90%] text-white drop-shadow-md">
+          Welcome to UoH GPA Calculator - Calculate your GPA and CGPA with ease.{" "}
+          <a href="#" className="transition duration-200 hover:underline">
+            Learn more
+          </a>
+        </p>
+      </StickyBanner>
+
       <div className="container mx-auto px-4 py-4 sm:py-8 max-w-5xl">
         {/* Dark Mode Toggle */}
         <motion.div
@@ -44,17 +57,17 @@ const Index = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <DarkModeToggle isDark={isDark} onToggle={toggleDarkMode} />
+          <ThemeToggle isDark={isDark} onToggle={toggleDarkMode} />
         </motion.div>
 
-        {/* Header */}
+        {/* Header with Spinning Text */}
         <motion.div 
-          className="text-center mb-6"
+          className="text-center mb-6 relative"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <div className="flex justify-center items-center mb-4">
+          <div className="flex justify-center items-center mb-4 relative">
             <div className="flex-1 flex flex-col items-center">
               <motion.h1 
                 className="text-lg sm:text-xl md:text-2xl font-bold text-[#000000] dark:text-white font-jakarta mb-2 text-center"
@@ -73,6 +86,17 @@ const Index = () => {
                 Prepared by students of Batch 2024 – AI Section A & B
               </motion.p>
             </div>
+            
+            {/* Spinning Text */}
+            <div className="absolute -right-16 top-0">
+              <SpinningText
+                radius={3}
+                fontSize={0.6}
+                className="font-medium leading-none text-[#0088CC] dark:text-blue-400"
+              >
+                {`Created by Haris H AI Student • `}
+              </SpinningText>
+            </div>
           </div>
           
           {/* Warning Banner */}
@@ -90,50 +114,17 @@ const Index = () => {
           </motion.div>
         </motion.div>
 
-        {/* Tab Switcher */}
+        {/* Fluid Tab Switcher */}
         <motion.div 
           className="flex justify-center mb-6 sm:mb-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
         >
-          <div className="bg-[#EEEEEE] dark:bg-gray-800 p-1 rounded-lg inline-flex w-full max-w-md relative overflow-hidden shadow-lg">
-            <div className="absolute inset-0 bg-gradient-to-r from-[#0088CC]/5 via-[#0088CC]/10 to-[#0088CC]/5 animate-pulse"></div>
-            <motion.div
-              className="flex-1"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <Button
-                onClick={() => setActiveTab('gpa')}
-                className={`w-full py-2 px-4 rounded-md font-inter transition-all text-sm sm:text-base relative z-10 ${
-                  activeTab === 'gpa'
-                    ? 'bg-[#0088CC] text-white shadow-lg transform scale-105'
-                    : 'bg-transparent text-[#979797] dark:text-gray-400 hover:text-[#000000] dark:hover:text-white hover:scale-102'
-                }`}
-                variant="ghost"
-              >
-                GPA Calculator
-              </Button>
-            </motion.div>
-            <motion.div
-              className="flex-1"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <Button
-                onClick={() => setActiveTab('cgpa')}
-                className={`w-full py-2 px-4 rounded-md font-inter transition-all text-sm sm:text-base relative z-10 ${
-                  activeTab === 'cgpa'
-                    ? 'bg-[#0088CC] text-white shadow-lg transform scale-105'
-                    : 'bg-transparent text-[#979797] dark:text-gray-400 hover:text-[#000000] dark:hover:text-white hover:scale-102'
-                }`}
-                variant="ghost"
-              >
-                CGPA Calculator
-              </Button>
-            </motion.div>
-          </div>
+          <FluidTabs 
+            activeTab={activeTab}
+            onTabChange={(tabId) => setActiveTab(tabId as 'gpa' | 'cgpa')}
+          />
         </motion.div>
 
         {/* Calculator Content */}
@@ -148,7 +139,7 @@ const Index = () => {
           {activeTab === 'gpa' ? <GPACalculator /> : <CGPACalculator />}
         </motion.div>
       </div>
-    </div>
+    </GridBackground>
   );
 };
 

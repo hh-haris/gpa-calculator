@@ -1,6 +1,4 @@
-
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -12,6 +10,8 @@ import ShimmerCard from './ShimmerCard';
 import { motion } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import jsPDF from 'jspdf';
+import { LiquidButton } from '@/components/ui/liquid-button';
+import { Button } from '@/components/ui/stateful-button';
 
 const CGPACalculator = () => {
   const [semesters, setSemesters] = useState<Semester[]>([
@@ -39,7 +39,7 @@ const CGPACalculator = () => {
       canvas.height = window.innerHeight;
       document.body.appendChild(canvas);
 
-      const duration = 800;
+      const duration = 600; // Reduced duration
       const end = Date.now() + duration;
       const colors = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEAA7", "#DDA0DD", "#98D8C8"];
 
@@ -54,24 +54,25 @@ const CGPACalculator = () => {
           return;
         }
 
+        // Reduced particle count for lower density
         myConfetti({
-          particleCount: 1,
+          particleCount: 1, // Reduced from 2
           angle: 60,
-          spread: 55,
+          spread: 45, // Reduced spread
           origin: { x: 0, y: 0.6 },
           colors: colors,
-          gravity: 0.8,
-          scalar: 0.8,
+          gravity: 0.9,
+          scalar: 0.7, // Reduced size
         });
 
         myConfetti({
-          particleCount: 1,
+          particleCount: 1, // Reduced from 2
           angle: 120,
-          spread: 55,
+          spread: 45, // Reduced spread
           origin: { x: 1, y: 0.6 },
           colors: colors,
-          gravity: 0.8,
-          scalar: 0.8,
+          gravity: 0.9,
+          scalar: 0.7, // Reduced size
         });
 
         requestAnimationFrame(frame);
@@ -103,7 +104,7 @@ const CGPACalculator = () => {
     ));
   };
 
-  const calculateResult = () => {
+  const calculateResult = async () => {
     const validSemesters = semesters.filter(semester => 
       semester.gpa !== '' && semester.totalCreditHours !== '' &&
       Number(semester.gpa) >= 0 && Number(semester.gpa) <= 4 && Number(semester.totalCreditHours) > 0
@@ -117,6 +118,9 @@ const CGPACalculator = () => {
       });
       return;
     }
+
+    // Simulate processing time
+    await new Promise(resolve => setTimeout(resolve, 1500));
 
     const processedSemesters = validSemesters.map(semester => ({
       ...semester,
@@ -274,15 +278,15 @@ const CGPACalculator = () => {
                             />
                           </div>
                           <div className="flex items-end">
-                            <Button
-                              variant="outline"
-                              size="sm"
+                            <LiquidButton
+                              variant="default"
+                              size="default"
                               onClick={() => removeSemester(semester.id)}
                               disabled={semesters.length === 1}
                               className="border-[#979797] dark:border-gray-600 text-[#979797] hover:bg-[#EEEEEE] dark:hover:bg-gray-700 w-full sm:w-auto"
                             >
                               <Trash2 size={16} />
-                            </Button>
+                            </LiquidButton>
                           </div>
                         </div>
                       </div>
@@ -297,18 +301,14 @@ const CGPACalculator = () => {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <Button
+                  <LiquidButton
                     onClick={addSemester}
                     className="bg-[#0088CC] hover:bg-[#0077BB] text-white font-inter w-full h-12 transition-all duration-300"
-                    style={{
-                      background: 'linear-gradient(45deg, #0088CC, #00AAFF, #0088CC)',
-                      backgroundSize: '200% 200%',
-                      animation: 'gradient-shift 3s ease infinite'
-                    }}
+                    size="xxl"
                   >
                     <Plus size={16} className="mr-2" />
                     Add Semester
-                  </Button>
+                  </LiquidButton>
                 </motion.div>
                 <motion.div
                   className="flex-1"
@@ -318,11 +318,7 @@ const CGPACalculator = () => {
                   <Button
                     onClick={calculateResult}
                     className="bg-[#000000] hover:bg-[#333333] text-white font-inter w-full h-12 transition-all duration-300"
-                    style={{
-                      background: 'linear-gradient(45deg, #000000, #333333, #000000)',
-                      backgroundSize: '200% 200%',
-                      animation: 'gradient-shift 3s ease infinite'
-                    }}
+                    loadingText="Calculating..."
                   >
                     Calculate CGPA
                   </Button>
@@ -339,14 +335,6 @@ const CGPACalculator = () => {
         result={result || { gpa: 0, grade: '', remarks: '' }}
         onExport={exportToPDF}
       />
-
-      <style>{`
-        @keyframes gradient-shift {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-      `}</style>
     </div>
   );
 };
