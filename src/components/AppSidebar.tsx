@@ -104,8 +104,8 @@ export function AppSidebar({ open, setOpen }: AppSidebarProps) {
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
             className="fixed left-0 top-0 h-full w-64 bg-white shadow-2xl z-50 flex flex-col border-r border-[#EEEEEE]"
           >
-            {/* Close button */}
-            <div className="flex justify-end p-4">
+            {/* Close button - moved down to avoid sticky banner */}
+            <div className="flex justify-end p-4" style={{ marginTop: '40px' }}>
               <button
                 onClick={() => setOpen(false)}
                 className="p-2 rounded-md hover:bg-[#EEEEEE] transition-colors"
@@ -150,9 +150,10 @@ export function SidebarTrigger({ onClick, className }: SidebarTriggerProps) {
     <button
       onClick={onClick}
       className={cn(
-        "fixed left-4 top-4 z-30 p-2 rounded-md hover:bg-[#EEEEEE] transition-colors",
+        "fixed left-4 z-30 p-2 rounded-md hover:bg-[#EEEEEE] transition-colors",
         className
       )}
+      style={{ top: '52px' }} // Moved down to avoid sticky banner
     >
       <Menu className="h-5 w-5 text-[#0088CC]" />
     </button>

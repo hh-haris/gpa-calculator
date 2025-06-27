@@ -8,14 +8,16 @@ const BackButton = () => {
   const navigate = useNavigate();
 
   return (
-    <Button
-      onClick={() => navigate('/')}
-      variant="ghost"
-      className="mb-4 text-[#0088CC] hover:bg-[#EEEEEE]"
-    >
-      <ArrowLeft size={16} className="mr-2" />
-      Back to Home
-    </Button>
+    <div className="flex justify-end mb-4">
+      <Button
+        onClick={() => navigate('/')}
+        variant="ghost"
+        className="text-[#0088CC] hover:bg-[#EEEEEE]"
+      >
+        <ArrowLeft size={16} className="mr-2" />
+        Back to Home
+      </Button>
+    </div>
   );
 };
 

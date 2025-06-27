@@ -174,11 +174,14 @@ const PublishGPAModal = ({ isOpen, onClose, onPublish }: PublishGPAModalProps) =
                     <Label className="text-sm font-inter text-[#000000]">
                       Type *
                     </Label>
-                    <Select value={formData.type} onValueChange={(value: 'GPA' | 'CGPA') => setFormData({...formData, type: value})}>
+                    <Select 
+                      value={formData.type} 
+                      onValueChange={(value: 'GPA' | 'CGPA') => setFormData({...formData, type: value})}
+                    >
                       <SelectTrigger className="border-[#979797] focus:border-[#0088CC]">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-white border border-[#979797] shadow-lg z-[10000]">
                         <SelectItem value="GPA">GPA</SelectItem>
                         <SelectItem value="CGPA">CGPA</SelectItem>
                       </SelectContent>
