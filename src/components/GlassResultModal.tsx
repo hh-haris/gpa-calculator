@@ -222,7 +222,7 @@ const GlassResultModal = ({ isOpen, onClose, result, onExport }: GlassResultModa
         </motion.div>
 
         {/* Glass CSS Styles */}
-        <style jsx>{`
+        <style>{`
           .glass-container {
             position: relative;
             display: flex;

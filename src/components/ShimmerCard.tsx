@@ -35,7 +35,7 @@ const ShimmerCard = ({ children, className = '' }: ShimmerCardProps) => {
         {children}
       </div>
 
-      <style jsx>{`
+      <style>{`
         @keyframes gradient-shift {
           0% { background-position: 0% 50%; }
           25% { background-position: 100% 50%; }
