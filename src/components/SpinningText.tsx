@@ -60,7 +60,7 @@ function SpinningText() {
             {letters.map((letter, index) => (
               <span
                 key={index}
-                className="absolute text-[0.6rem] font-medium text-[#979797] font-inter"
+                className="absolute text-[0.9rem] font-medium text-[#979797] font-inter"
                 style={{
                   left: '50%',
                   top: '50%',
