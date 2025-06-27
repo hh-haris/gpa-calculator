@@ -53,8 +53,8 @@ function SpinningText() {
               ease: 'linear'
             }}
             style={{
-              width: '150px',
-              height: '150px',
+              width: '120px',
+              height: '120px',
             }}
           >
             {letters.map((letter, index) => (
