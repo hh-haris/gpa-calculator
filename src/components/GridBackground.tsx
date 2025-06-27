@@ -13,7 +13,7 @@ export function GridBackground() {
         )}
       />
       {/* Subtle radial gradient for center focus */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-radial from-transparent via-transparent to-white/30"></div>
+      <div className="pointer-events-none absolute inset-0 bg-gradient-radial from-transparent via-transparent to-white/20"></div>
     </div>
   );
 }
