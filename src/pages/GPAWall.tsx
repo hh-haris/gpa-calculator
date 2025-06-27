@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,6 +6,7 @@ import { motion } from 'framer-motion';
 import { Trophy, Plus } from 'lucide-react';
 import { GridBackground } from '@/components/GridBackground';
 import { AppSidebar, SidebarTrigger } from '@/components/AppSidebar';
+import SpinningText from '@/components/SpinningText';
 import { fetchGPAPosts, fetchGPAReactions, toggleGPAReaction, createGPAPost } from '@/utils/supabaseHelpers';
 import { getSessionId } from '@/utils/analytics';
 import PublishGPAModal from '@/components/PublishGPAModal';
@@ -96,6 +96,7 @@ const GPAWall = () => {
     return (
       <div className="min-h-screen bg-white font-inter relative flex items-center justify-center">
         <GridBackground />
+        <SpinningText />
         <div className="text-[#0088CC]">Loading...</div>
       </div>
     );
@@ -104,6 +105,7 @@ const GPAWall = () => {
   return (
     <div className="min-h-screen bg-white font-inter relative">
       <GridBackground />
+      <SpinningText />
       
       <AppSidebar open={sidebarOpen} setOpen={setSidebarOpen} />
       <SidebarTrigger onClick={() => setSidebarOpen(true)} />

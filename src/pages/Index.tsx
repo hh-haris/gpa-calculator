@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { StickyBanner } from '@/components/ui/sticky-banner';
@@ -7,7 +6,9 @@ import CGPACalculator from '@/components/CGPACalculator';
 import FluidTabs from '@/components/FluidTabs';
 import { GridBackground } from '@/components/GridBackground';
 import { AppSidebar, SidebarTrigger } from '@/components/AppSidebar';
+import SpinningText from '@/components/SpinningText';
 import { motion } from 'framer-motion';
+import { trackAnalytics } from '@/utils/analytics';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState<'gpa' | 'cgpa'>('gpa');
@@ -18,14 +19,23 @@ const Index = () => {
     { id: 'cgpa', label: 'CGPA Calculator' }
   ];
 
-  const handleCalculateGPA = () => {
-    // Calculation logic without overlay
+  const handleCalculateGPA = async (gpa?: number, subjectsCount?: number) => {
+    // Track analytics when GPA is calculated
+    if (gpa !== undefined) {
+      await trackAnalytics({
+        gpaCalculated: gpa,
+        subjectsCount: subjectsCount
+      });
+    }
   };
 
   return (
     <div className="min-h-screen bg-white font-inter transition-all duration-300 relative">
       {/* Grid Background */}
       <GridBackground />
+      
+      {/* Spinning Text Component */}
+      <SpinningText />
       
       {/* Sidebar */}
       <AppSidebar open={sidebarOpen} setOpen={setSidebarOpen} />

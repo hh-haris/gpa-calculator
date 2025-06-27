@@ -24,7 +24,7 @@ const subjectOptions = [
 ];
 
 interface GPACalculatorProps {
-  onCalculate?: () => void;
+  onCalculate?: (gpa?: number, subjectsCount?: number) => void;
 }
 
 const GPACalculator = ({ onCalculate }: GPACalculatorProps) => {
@@ -163,7 +163,7 @@ const GPACalculator = ({ onCalculate }: GPACalculatorProps) => {
     
     // Call the onCalculate prop if provided
     if (onCalculate) {
-      onCalculate();
+      onCalculate(gpa, validSubjects.length);
     }
     
     // Trigger confetti after a short delay

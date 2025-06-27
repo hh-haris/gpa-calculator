@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,6 +10,7 @@ import { motion } from 'framer-motion';
 import { MessageSquare, ThumbsUp, ThumbsDown, Plus } from 'lucide-react';
 import { GridBackground } from '@/components/GridBackground';
 import { AppSidebar, SidebarTrigger } from '@/components/AppSidebar';
+import SpinningText from '@/components/SpinningText';
 import { fetchSuggestions, fetchSuggestionVotes, toggleSuggestionVote, createSuggestion } from '@/utils/supabaseHelpers';
 import BackButton from '@/components/BackButton';
 
@@ -92,6 +92,7 @@ const Suggest = () => {
     return (
       <div className="min-h-screen bg-white font-inter relative flex items-center justify-center">
         <GridBackground />
+        <SpinningText />
         <div className="text-[#0088CC]">Loading...</div>
       </div>
     );
@@ -100,6 +101,7 @@ const Suggest = () => {
   return (
     <div className="min-h-screen bg-white font-inter relative">
       <GridBackground />
+      <SpinningText />
       
       <AppSidebar open={sidebarOpen} setOpen={setSidebarOpen} />
       <SidebarTrigger onClick={() => setSidebarOpen(true)} />

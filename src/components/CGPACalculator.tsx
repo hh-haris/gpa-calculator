@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,7 +13,7 @@ import confetti from 'canvas-confetti';
 import jsPDF from 'jspdf';
 
 interface CGPACalculatorProps {
-  onCalculate?: () => void;
+  onCalculate?: (cgpa?: number, semestersCount?: number) => void;
 }
 
 const CGPACalculator = ({ onCalculate }: CGPACalculatorProps) => {
@@ -147,7 +146,7 @@ const CGPACalculator = ({ onCalculate }: CGPACalculatorProps) => {
     
     // Call the onCalculate prop if provided
     if (onCalculate) {
-      onCalculate();
+      onCalculate(cgpa, validSemesters.length);
     }
     
     // Trigger confetti after a short delay
