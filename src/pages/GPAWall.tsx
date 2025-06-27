@@ -46,7 +46,13 @@ const GPAWall = () => {
       const postsWithReactions = await Promise.all(
         postsData.map(async (post) => {
           const reactions = await fetchGPAReactions(post.id);
-          return { ...post, reactions };
+          return { 
+            ...post, 
+            reactions,
+            type: post.type as 'GPA' | 'CGPA',  // Type assertion to fix the TypeScript error
+            name: post.name || undefined,
+            message: post.message || undefined
+          };
         })
       );
       setPosts(postsWithReactions);
