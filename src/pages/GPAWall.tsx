@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { motion } from 'framer-motion';
-import { Trophy, Plus, Heart, Fire, Laugh, Frown } from 'lucide-react';
+import { Trophy, Plus, Heart, Flame, Laugh, Frown } from 'lucide-react';
 import { GridBackground } from '@/components/GridBackground';
 import { StickyBanner } from '@/components/ui/sticky-banner';
 import { AppSidebar, SidebarTrigger } from '@/components/AppSidebar';
