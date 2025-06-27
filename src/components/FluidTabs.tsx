@@ -40,19 +40,14 @@ export default function FluidTabs({ activeTab, onTabChange, tabs }: FluidTabsPro
   const getTabIndex = (tabId: string) =>
     tabs.findIndex((tab) => tab.id === tabId);
 
-  const tabsWithIcons = tabs.map(tab => ({
-    ...tab,
-    icon: tabIcons[tab.id as keyof typeof tabIcons] || <GraduationCap size={18} />
-  }));
-
   return (
     <div className="flex justify-center mb-6 sm:mb-8 px-4">
-      <div className="relative w-full max-w-xs bg-[#EEEEEE] rounded-full p-2 shadow-lg overflow-hidden">
+      <div className="relative w-full max-w-xs bg-[#f5f1eb] rounded-full p-2 shadow-md overflow-hidden">
         <div className="relative flex items-center justify-between">
           <AnimatePresence initial={false}>
             <motion.div
               key={activeTab}
-              className="absolute top-0 left-0 h-full rounded-full bg-white shadow-md"
+              className="absolute top-0 left-0 h-full rounded-full bg-white"
               initial={{ x: `${getTabIndex(prevActiveTab) * 100}%` }}
               animate={{ x: `${getTabIndex(activeTab) * 100}%` }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
@@ -62,17 +57,14 @@ export default function FluidTabs({ activeTab, onTabChange, tabs }: FluidTabsPro
             />
           </AnimatePresence>
 
-          {tabsWithIcons.map((tab) => (
+          {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => handleTabClick(tab.id)}
-              className={`relative z-10 flex w-1/2 items-center justify-center gap-1.5 rounded-full px-4 py-2 sm:py-3 text-sm font-medium font-inter transition-colors duration-300 ${
-                activeTab === tab.id 
-                  ? "text-[#0088CC] transform scale-105" 
-                  : "text-[#979797] hover:text-[#000000]"
+              className={`relative z-10 flex w-1/2 items-center justify-center rounded-full px-4 py-2 text-sm font-medium transition-colors duration-300 ${
+                activeTab === tab.id ? "text-black" : "text-gray-500"
               } ${touchedTab === tab.id ? "blur-sm" : ""}`}
             >
-              {tab.icon}
               {tab.label}
             </button>
           ))}

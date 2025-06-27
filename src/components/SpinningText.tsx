@@ -8,17 +8,7 @@ function SpinningText() {
   const total = letters.length;
 
   return (
-    <div className="fixed top-4 right-4 z-30">
-      {/* Glass morphism blurred circle background */}
-      <div className="absolute inset-0 bg-white/20 backdrop-blur-sm rounded-full border border-white/30 shadow-lg" 
-           style={{
-             width: 'min(30vw, 120px)',
-             height: 'min(30vw, 120px)',
-             transform: 'translate(-50%, -50%)',
-             left: '50%',
-             top: '50%'
-           }} />
-      
+    <div className="fixed top-4 right-4 z-50">
       <motion.div
         className="relative"
         initial={{ rotate: 0 }}
@@ -36,7 +26,7 @@ function SpinningText() {
         {letters.map((letter, index) => (
           <span
             key={index}
-            className="absolute text-[0.5rem] sm:text-[0.6rem] font-medium text-[#0088CC] font-inter"
+            className="absolute text-[0.5rem] sm:text-[0.6rem] font-medium text-[#979797] font-inter"
             style={{
               left: '50%',
               top: '50%',

@@ -9,7 +9,7 @@ export function GridBackground() {
         className={cn(
           "absolute inset-0",
           "[background-size:20px_20px] sm:[background-size:40px_40px]",
-          "[background-image:linear-gradient(to_right,rgba(228,228,231,0.3)_1px,transparent_1px),linear-gradient(to_bottom,rgba(228,228,231,0.3)_1px,transparent_1px)]",
+          "[background-image:linear-gradient(to_right,rgba(228,228,231,0.2)_1px,transparent_1px),linear-gradient(to_bottom,rgba(228,228,231,0.2)_1px,transparent_1px)]",
         )}
       />
       {/* Radial gradient for faded look */}

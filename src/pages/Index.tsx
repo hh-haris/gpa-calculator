@@ -7,14 +7,11 @@ import CGPACalculator from '@/components/CGPACalculator';
 import FluidTabs from '@/components/FluidTabs';
 import SpinningText from '@/components/SpinningText';
 import { GridBackground } from '@/components/GridBackground';
-import GlassMorphismOverlay from '@/components/GlassMorphismOverlay';
 import { AppSidebar, SidebarTrigger } from '@/components/AppSidebar';
-import { MovingBorder } from '@/components/ui/moving-border';
 import { motion } from 'framer-motion';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState<'gpa' | 'cgpa'>('gpa');
-  const [showOverlay, setShowOverlay] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const tabs = [
@@ -23,23 +20,13 @@ const Index = () => {
   ];
 
   const handleCalculateGPA = () => {
-    setShowOverlay(true);
-    // Simulate calculation time
-    setTimeout(() => {
-      setShowOverlay(false);
-    }, 2000);
+    // Calculation logic without overlay
   };
 
   return (
     <div className="min-h-screen bg-white font-inter transition-all duration-300 relative">
       {/* Grid Background */}
       <GridBackground />
-      
-      {/* Glass Morphism Overlay */}
-      <GlassMorphismOverlay 
-        isVisible={showOverlay} 
-        onClose={() => setShowOverlay(false)} 
-      />
       
       {/* Sidebar */}
       <AppSidebar open={sidebarOpen} setOpen={setSidebarOpen} />
@@ -81,21 +68,17 @@ const Index = () => {
           {/* Spinning Text - positioned absolutely in top right */}
           <SpinningText />
           
-          {/* Warning Banner with Moving Border */}
+          {/* Warning Banner without Moving Border */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
-            <MovingBorder
-              duration={3000}
-              borderRadius="0.75rem"
-              className="bg-[#FAE6B4] p-4 max-w-2xl mx-auto"
-            >
+            <div className="bg-[#FAE6B4] p-4 max-w-2xl mx-auto rounded-xl">
               <AlertDescription className="text-[#979797] font-inter text-xs sm:text-sm text-center">
                 While this calculator is designed with care and accuracy in mind, any unexpected errors or incorrect results are beyond our responsibility.
               </AlertDescription>
-            </MovingBorder>
+            </div>
           </motion.div>
         </motion.div>
 

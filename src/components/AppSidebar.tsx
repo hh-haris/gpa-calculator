@@ -86,11 +86,8 @@ export function AppSidebar({ open, setOpen }: AppSidebarProps) {
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
             className="fixed left-0 top-0 h-full w-64 bg-white shadow-2xl z-50 flex flex-col border-r border-[#EEEEEE]"
           >
-            {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-[#EEEEEE]">
-              <h2 className="text-lg font-bold text-[#000000] font-jakarta">
-                UoH Calculator
-              </h2>
+            {/* Close button */}
+            <div className="flex justify-end p-4">
               <button
                 onClick={() => setOpen(false)}
                 className="p-2 rounded-md hover:bg-[#EEEEEE] transition-colors"
@@ -100,7 +97,7 @@ export function AppSidebar({ open, setOpen }: AppSidebarProps) {
             </div>
 
             {/* Links */}
-            <div className="flex-1 overflow-x-hidden overflow-y-auto p-4">
+            <div className="flex-1 overflow-x-hidden overflow-y-auto px-4">
               <div className="flex flex-col gap-2">
                 {links.map((link, idx) => (
                   <SidebarLink key={idx} link={link} />
@@ -131,7 +128,7 @@ export function SidebarTrigger({ onClick, className }: SidebarTriggerProps) {
     <button
       onClick={onClick}
       className={cn(
-        "fixed left-4 top-16 z-30 p-2 rounded-md bg-white shadow-lg border border-[#EEEEEE] hover:bg-[#EEEEEE] transition-colors",
+        "fixed left-4 top-16 z-30 p-2 rounded-md hover:bg-[#EEEEEE] transition-colors",
         className
       )}
     >
