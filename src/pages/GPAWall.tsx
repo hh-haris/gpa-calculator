@@ -1,14 +1,16 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { motion } from 'framer-motion';
-import { Trophy, Plus, Heart, Flame, Laugh, Frown } from 'lucide-react';
+import { Trophy, Plus } from 'lucide-react';
 import { GridBackground } from '@/components/GridBackground';
-import { StickyBanner } from '@/components/ui/sticky-banner';
 import { AppSidebar, SidebarTrigger } from '@/components/AppSidebar';
+import { fetchGPAPosts, fetchGPAReactions, toggleGPAReaction, createGPAPost } from '@/utils/supabaseHelpers';
+import { getSessionId } from '@/utils/analytics';
 import PublishGPAModal from '@/components/PublishGPAModal';
+import BackButton from '@/components/BackButton';
 
 interface GPAPost {
   id: string;
@@ -19,7 +21,7 @@ interface GPAPost {
   message?: string;
   gpa: number;
   type: 'GPA' | 'CGPA';
-  reactions: {
+  reactions?: {
     clap: number;
     fire: number;
     laugh: number;
@@ -31,70 +33,47 @@ interface GPAPost {
 const GPAWall = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [publishModalOpen, setPublishModalOpen] = useState(false);
-  const [posts, setPosts] = useState<GPAPost[]>([
-    {
-      id: '1',
-      name: 'Ahmed Ali',
-      class: 'AI',
-      section: 'A',
-      semester: '3rd',
-      message: 'Finally achieved my target GPA! Hard work pays off 🎉',
-      gpa: 3.8,
-      type: 'GPA',
-      reactions: { clap: 15, fire: 8, laugh: 2, cry: 0 }
-    },
-    {
-      id: '2',
-      class: 'AI',
-      section: 'B',
-      semester: '5th',
-      message: 'Struggled this semester but managed to maintain my CGPA',
-      gpa: 3.2,
-      type: 'CGPA',
-      reactions: { clap: 5, fire: 3, laugh: 0, cry: 1 }
-    },
-    {
-      id: '3',
-      name: 'Sara Khan',
-      class: 'AI',
-      section: 'A',
-      semester: '1st',
-      gpa: 3.9,
-      type: 'GPA',
-      reactions: { clap: 22, fire: 12, laugh: 1, cry: 0 }
-    }
-  ]);
+  const [posts, setPosts] = useState<GPAPost[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleReaction = (postId: string, reaction: 'clap' | 'fire' | 'laugh' | 'cry') => {
-    setPosts(posts.map(post => {
-      if (post.id === postId) {
-        const newReactions = { ...post.reactions };
-        
-        // Remove previous reaction if exists
-        if (post.userReaction) {
-          newReactions[post.userReaction]--;
-        }
-        
-        // Add new reaction if different from previous
-        if (post.userReaction !== reaction) {
-          newReactions[reaction]++;
-          return { ...post, reactions: newReactions, userReaction: reaction };
-        } else {
-          return { ...post, reactions: newReactions, userReaction: undefined };
-        }
-      }
-      return post;
-    }));
+  useEffect(() => {
+    loadPosts();
+  }, []);
+
+  const loadPosts = async () => {
+    try {
+      const postsData = await fetchGPAPosts();
+      const postsWithReactions = await Promise.all(
+        postsData.map(async (post) => {
+          const reactions = await fetchGPAReactions(post.id);
+          return { ...post, reactions };
+        })
+      );
+      setPosts(postsWithReactions);
+    } catch (error) {
+      console.error('Error loading posts:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handlePublish = (newPost: Omit<GPAPost, 'id' | 'reactions' | 'userReaction'>) => {
-    const post: GPAPost = {
-      ...newPost,
-      id: Date.now().toString(),
-      reactions: { clap: 0, fire: 0, laugh: 0, cry: 0 }
-    };
-    setPosts([post, ...posts]);
-    setPublishModalOpen(false);
+  const handleReaction = async (postId: string, reaction: 'clap' | 'fire' | 'laugh' | 'cry') => {
+    try {
+      await toggleGPAReaction(postId, reaction);
+      await loadPosts(); // Reload to get updated reactions
+    } catch (error) {
+      console.error('Error handling reaction:', error);
+    }
+  };
+
+  const handlePublish = async (newPost: Omit<GPAPost, 'id' | 'reactions' | 'userReaction'>) => {
+    try {
+      await createGPAPost(newPost);
+      await loadPosts(); // Reload posts
+      setPublishModalOpen(false);
+    } catch (error) {
+      console.error('Error publishing post:', error);
+    }
   };
 
   const getReactionIcon = (type: string) => {
@@ -107,20 +86,25 @@ const GPAWall = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white font-inter relative flex items-center justify-center">
+        <GridBackground />
+        <div className="text-[#0088CC]">Loading...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white font-inter relative">
       <GridBackground />
       
       <AppSidebar open={sidebarOpen} setOpen={setSidebarOpen} />
       <SidebarTrigger onClick={() => setSidebarOpen(true)} />
-      
-      <StickyBanner className="bg-gradient-to-r from-[#0088CC] to-[#0077BB]">
-        <p className="mx-0 max-w-[90%] text-white drop-shadow-md font-inter text-xs sm:text-sm">
-          Share your GPA achievements with your classmates! 🎓
-        </p>
-      </StickyBanner>
 
       <div className="container mx-auto px-4 py-8 max-w-4xl relative z-10">
+        <BackButton />
+        
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -194,12 +178,10 @@ const GPAWall = () => {
                         variant="ghost"
                         size="sm"
                         onClick={() => handleReaction(post.id, reaction)}
-                        className={`flex items-center gap-1 text-xs ${
-                          post.userReaction === reaction ? 'bg-[#EEEEEE]' : ''
-                        }`}
+                        className="flex items-center gap-1 text-xs hover:bg-[#EEEEEE]"
                       >
                         <span>{getReactionIcon(reaction)}</span>
-                        <span>{post.reactions[reaction]}</span>
+                        <span>{post.reactions?.[reaction] || 0}</span>
                       </Button>
                     ))}
                   </div>

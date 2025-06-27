@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Menu, BarChart3, Trophy, MessageSquare } from "lucide-react";
+import { X, Menu, Trophy, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 
@@ -72,11 +72,6 @@ interface AppSidebarProps {
 export function AppSidebar({ open, setOpen }: AppSidebarProps) {
   const links = [
     {
-      label: "Smart Analytics",
-      href: "/analytics",
-      icon: <BarChart3 className="h-5 w-5 shrink-0 text-[#0088CC]" />,
-    },
-    {
       label: "GPA Wall",
       href: "/gpa-wall",
       icon: <Trophy className="h-5 w-5 shrink-0 text-[#0088CC]" />,
@@ -84,8 +79,7 @@ export function AppSidebar({ open, setOpen }: AppSidebarProps) {
     {
       label: "Suggest",
       href: "/suggest",
-      icon: <MessageSquare className="h-5 w-5 shrink-0 text-gray-400" />,
-      disabled: true,
+      icon: <MessageSquare className="h-5 w-5 shrink-0 text-[#0088CC]" />,
     },
   ];
 
@@ -110,8 +104,8 @@ export function AppSidebar({ open, setOpen }: AppSidebarProps) {
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
             className="fixed left-0 top-0 h-full w-64 bg-white shadow-2xl z-50 flex flex-col border-r border-[#EEEEEE]"
           >
-            {/* Close button - moved down to avoid sticky banner */}
-            <div className="flex justify-end p-4 pt-16">
+            {/* Close button */}
+            <div className="flex justify-end p-4">
               <button
                 onClick={() => setOpen(false)}
                 className="p-2 rounded-md hover:bg-[#EEEEEE] transition-colors"
@@ -130,13 +124,6 @@ export function AppSidebar({ open, setOpen }: AppSidebarProps) {
                     onClick={() => setOpen(false)}
                   />
                 ))}
-              </div>
-              
-              {/* Special notice for disabled option */}
-              <div className="mt-4 p-3 bg-[#FAE6B4] rounded-lg border border-[#FAE6B4]">
-                <p className="text-xs text-[#979797] font-inter">
-                  <strong>Suggest</strong> is only available for 2024 Batch AI Students of Section A and B
-                </p>
               </div>
             </div>
 
@@ -163,7 +150,7 @@ export function SidebarTrigger({ onClick, className }: SidebarTriggerProps) {
     <button
       onClick={onClick}
       className={cn(
-        "fixed left-4 top-16 z-30 p-2 rounded-md hover:bg-[#EEEEEE] transition-colors",
+        "fixed left-4 top-4 z-30 p-2 rounded-md hover:bg-[#EEEEEE] transition-colors",
         className
       )}
     >

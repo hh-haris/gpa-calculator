@@ -9,7 +9,196 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      gpa_posts: {
+        Row: {
+          class: string
+          created_at: string
+          device_info: Json | null
+          gpa: number
+          id: string
+          message: string | null
+          name: string | null
+          section: string
+          semester: string
+          session_id: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          class: string
+          created_at?: string
+          device_info?: Json | null
+          gpa: number
+          id?: string
+          message?: string | null
+          name?: string | null
+          section: string
+          semester: string
+          session_id: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          class?: string
+          created_at?: string
+          device_info?: Json | null
+          gpa?: number
+          id?: string
+          message?: string | null
+          name?: string | null
+          section?: string
+          semester?: string
+          session_id?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      gpa_reactions: {
+        Row: {
+          created_at: string
+          id: string
+          post_id: string | null
+          reaction_type: string | null
+          session_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          post_id?: string | null
+          reaction_type?: string | null
+          session_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          post_id?: string | null
+          reaction_type?: string | null
+          session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gpa_reactions_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "gpa_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      suggestion_votes: {
+        Row: {
+          created_at: string
+          id: string
+          session_id: string
+          suggestion_id: string | null
+          vote_type: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          session_id: string
+          suggestion_id?: string | null
+          vote_type?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          session_id?: string
+          suggestion_id?: string | null
+          vote_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "suggestion_votes_suggestion_id_fkey"
+            columns: ["suggestion_id"]
+            isOneToOne: false
+            referencedRelation: "suggestions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      suggestions: {
+        Row: {
+          additional_info: string | null
+          created_at: string
+          device_info: Json | null
+          id: string
+          is_verified_student: boolean | null
+          name: string
+          session_id: string
+          suggestion: string
+          updated_at: string
+          votes: number | null
+        }
+        Insert: {
+          additional_info?: string | null
+          created_at?: string
+          device_info?: Json | null
+          id?: string
+          is_verified_student?: boolean | null
+          name: string
+          session_id: string
+          suggestion: string
+          updated_at?: string
+          votes?: number | null
+        }
+        Update: {
+          additional_info?: string | null
+          created_at?: string
+          device_info?: Json | null
+          id?: string
+          is_verified_student?: boolean | null
+          name?: string
+          session_id?: string
+          suggestion?: string
+          updated_at?: string
+          votes?: number | null
+        }
+        Relationships: []
+      }
+      user_analytics: {
+        Row: {
+          calculation_count: number | null
+          created_at: string
+          device_type: string | null
+          gpa_calculated: number | null
+          id: string
+          ip_address: unknown | null
+          is_returning_user: boolean | null
+          session_id: string
+          subjects_count: number | null
+          updated_at: string
+          user_agent: string | null
+        }
+        Insert: {
+          calculation_count?: number | null
+          created_at?: string
+          device_type?: string | null
+          gpa_calculated?: number | null
+          id?: string
+          ip_address?: unknown | null
+          is_returning_user?: boolean | null
+          session_id?: string
+          subjects_count?: number | null
+          updated_at?: string
+          user_agent?: string | null
+        }
+        Update: {
+          calculation_count?: number | null
+          created_at?: string
+          device_type?: string | null
+          gpa_calculated?: number | null
+          id?: string
+          ip_address?: unknown | null
+          is_returning_user?: boolean | null
+          session_id?: string
+          subjects_count?: number | null
+          updated_at?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

@@ -7,7 +7,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import GPAWall from "./pages/GPAWall";
 import Suggest from "./pages/Suggest";
-import Analytics from "./pages/Analytics";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,7 +21,6 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/gpa-wall" element={<GPAWall />} />
           <Route path="/suggest" element={<Suggest />} />
-          <Route path="/analytics" element={<Analytics />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
