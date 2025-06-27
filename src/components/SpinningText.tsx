@@ -62,7 +62,7 @@ function SpinningText() {
                 key={index}
                 className="absolute text-[0.7rem] font-medium text-[#979797] font-inter"
                 style={{
-                  left: '80%',
+                  left: '50%',
                   top: '50%',
                   transform: `
                     rotate(${(360 / total) * index}deg)
