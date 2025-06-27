@@ -23,7 +23,11 @@ const subjectOptions = [
   { value: 8, label: "8 Subjects" },
 ];
 
-const GPACalculator = () => {
+interface GPACalculatorProps {
+  onCalculate?: () => void;
+}
+
+const GPACalculator = ({ onCalculate }: GPACalculatorProps) => {
   const [open, setOpen] = useState(false);
   const [subjectCount, setSubjectCount] = useState<number | null>(null);
   const [subjects, setSubjects] = useState<Subject[]>([]);
@@ -156,6 +160,11 @@ const GPACalculator = () => {
 
     setResult({ gpa, grade, remarks });
     setShowModal(true);
+    
+    // Call the onCalculate prop if provided
+    if (onCalculate) {
+      onCalculate();
+    }
     
     // Trigger confetti after a short delay
     setTimeout(() => triggerConfetti(gpa), 500);

@@ -12,7 +12,11 @@ import { motion } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import jsPDF from 'jspdf';
 
-const CGPACalculator = () => {
+interface CGPACalculatorProps {
+  onCalculate?: () => void;
+}
+
+const CGPACalculator = ({ onCalculate }: CGPACalculatorProps) => {
   const [semesters, setSemesters] = useState<Semester[]>([
     { id: '1', name: 'Semester 1', gpa: 0, totalCreditHours: 0 }
   ]);
@@ -139,6 +143,11 @@ const CGPACalculator = () => {
 
     setResult({ gpa: cgpa, grade, remarks });
     setShowModal(true);
+    
+    // Call the onCalculate prop if provided
+    if (onCalculate) {
+      onCalculate();
+    }
     
     // Trigger confetti after a short delay
     setTimeout(() => triggerConfetti(cgpa), 500);
