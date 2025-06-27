@@ -53,7 +53,7 @@ function SpinningText() {
               ease: 'linear'
             }}
             style={{
-              width: '100px',
+              width: '110px',
               height: '210px',
             }}
           >
