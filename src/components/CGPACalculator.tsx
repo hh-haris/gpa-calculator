@@ -8,6 +8,7 @@ import { Semester, calculateCGPA, getGPAPercentage, getLetterGrade, getRemarks }
 import { useToast } from '@/hooks/use-toast';
 import ResultModal from './ResultModal';
 import ShimmerCard from './ShimmerCard';
+import { MovingBorder } from './ui/moving-border';
 import { motion } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import jsPDF from 'jspdf';
@@ -236,113 +237,129 @@ const CGPACalculator = ({ onCalculate }: CGPACalculatorProps) => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <ShimmerCard>
-          <Card className="border-2 border-[#EEEEEE]">
-            <CardHeader className="bg-[#EEEEEE] p-4 sm:p-6">
-              <CardTitle className="font-jakarta font-semibold text-[#000000] text-lg sm:text-xl flex items-center">
-                <GraduationCap size={20} className="mr-2 text-[#0088CC]" />
-                Add Semesters
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-4 sm:p-6">
-              <div className="space-y-4">
-                {semesters.map((semester, index) => (
-                  <motion.div
-                    key={semester.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.3, delay: index * 0.1 }}
-                    className="relative overflow-hidden"
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-r from-[#0088CC]/5 via-transparent to-[#0088CC]/5 rounded-lg"></div>
-                    <div className="relative bg-white p-4 rounded-lg border border-[#EEEEEE]">
-                      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                        <div>
-                          <Label className="font-inter text-[#000000] text-sm flex items-center mb-2">
-                            <BookOpen size={16} className="mr-1 text-[#979797]" />
-                            Semester Name
-                          </Label>
-                          <Input
-                            value={semester.name}
-                            onChange={(e) => updateSemester(semester.id, 'name', e.target.value)}
-                            placeholder="Enter semester name"
-                            className="border-[#979797] focus:border-[#0088CC] text-sm sm:text-base"
-                          />
-                        </div>
-                        <div>
-                          <Label className="font-inter text-[#000000] text-sm flex items-center mb-2">
-                            <Target size={16} className="mr-1 text-[#979797]" />
-                            GPA (0-4)
-                          </Label>
-                          <Input
-                            type="number"
-                            min="0"
-                            max="4"
-                            step="0.01"
-                            value={semester.gpa}
-                            onChange={(e) => updateSemester(semester.id, 'gpa', Number(e.target.value))}
-                            className="border-[#979797] focus:border-[#0088CC] text-sm sm:text-base"
-                          />
-                        </div>
-                        <div>
-                          <Label className="font-inter text-[#000000] text-sm mb-2 block">
-                            Total Credit Hours
-                          </Label>
-                          <Input
-                            type="number"
-                            min="1"
-                            value={semester.totalCreditHours}
-                            onChange={(e) => updateSemester(semester.id, 'totalCreditHours', Number(e.target.value))}
-                            className="border-[#979797] focus:border-[#0088CC] text-sm sm:text-base"
-                          />
-                        </div>
-                        <div className="flex items-end">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => removeSemester(semester.id)}
-                            disabled={semesters.length === 1}
-                            className="border-[#979797] text-[#979797] hover:bg-[#EEEEEE] w-full sm:w-auto"
-                          >
-                            <Trash2 size={16} />
-                          </Button>
+        <MovingBorder duration={4000} borderRadius="1rem">
+          <ShimmerCard>
+            <Card className="border-2 border-[#EEEEEE]">
+              <CardHeader className="bg-[#EEEEEE] p-4 sm:p-6">
+                <CardTitle className="font-jakarta font-semibold text-[#000000] text-lg sm:text-xl flex items-center">
+                  <GraduationCap size={20} className="mr-2 text-[#0088CC]" />
+                  Add Semesters
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4 sm:p-6">
+                <div className="space-y-4">
+                  {semesters.map((semester, index) => (
+                    <motion.div
+                      key={semester.id}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.3, delay: index * 0.1 }}
+                      className="relative overflow-hidden"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-[#0088CC]/5 via-transparent to-[#0088CC]/5 rounded-lg"></div>
+                      <div className="relative bg-white p-4 rounded-lg border border-[#EEEEEE]">
+                        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                          <div>
+                            <Label className="font-inter text-[#000000] text-sm flex items-center mb-2">
+                              <BookOpen size={16} className="mr-1 text-[#979797]" />
+                              Semester Name
+                            </Label>
+                            <Input
+                              value={semester.name}
+                              onChange={(e) => updateSemester(semester.id, 'name', e.target.value)}
+                              placeholder="Enter semester name"
+                              className="border-[#979797] focus:border-[#0088CC] text-sm sm:text-base"
+                            />
+                          </div>
+                          <div>
+                            <Label className="font-inter text-[#000000] text-sm flex items-center mb-2">
+                              <Target size={16} className="mr-1 text-[#979797]" />
+                              GPA (0-4)
+                            </Label>
+                            <Input
+                              type="number"
+                              min="0"
+                              max="4"
+                              step="0.01"
+                              value={semester.gpa || ''}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                const numValue = value === '' ? 0 : Number(value);
+                                if (numValue >= 0 && numValue <= 4) {
+                                  updateSemester(semester.id, 'gpa', numValue);
+                                }
+                              }}
+                              placeholder="Enter GPA"
+                              className="border-[#979797] focus:border-[#0088CC] text-sm sm:text-base"
+                            />
+                          </div>
+                          <div>
+                            <Label className="font-inter text-[#000000] text-sm mb-2 block">
+                              Total Credit Hours
+                            </Label>
+                            <Input
+                              type="number"
+                              min="1"
+                              value={semester.totalCreditHours || ''}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                const numValue = value === '' ? 0 : Number(value);
+                                if (numValue >= 0) {
+                                  updateSemester(semester.id, 'totalCreditHours', numValue);
+                                }
+                              }}
+                              placeholder="Enter credit hours"
+                              className="border-[#979797] focus:border-[#0088CC] text-sm sm:text-base"
+                            />
+                          </div>
+                          <div className="flex items-end">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => removeSemester(semester.id)}
+                              disabled={semesters.length === 1}
+                              className="border-[#979797] text-[#979797] hover:bg-[#EEEEEE] w-full sm:w-auto"
+                            >
+                              <Trash2 size={16} />
+                            </Button>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    </motion.div>
+                  ))}
+                </div>
+                
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-6">
+                  <motion.div
+                    className="flex-1"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <Button
+                      onClick={addSemester}
+                      className="bg-[#0088CC] hover:bg-[#0077BB] text-white font-inter w-full h-12"
+                    >
+                      <Plus size={16} className="mr-2" />
+                      Add Semester
+                    </Button>
                   </motion.div>
-                ))}
-              </div>
-              
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-6">
-                <motion.div
-                  className="flex-1"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <Button
-                    onClick={addSemester}
-                    className="bg-[#0088CC] hover:bg-[#0077BB] text-white font-inter w-full h-12"
+                  <motion.div
+                    className="flex-1"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                   >
-                    <Plus size={16} className="mr-2" />
-                    Add Semester
-                  </Button>
-                </motion.div>
-                <motion.div
-                  className="flex-1"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <Button
-                    onClick={calculateResult}
-                    className="bg-[#000000] hover:bg-[#333333] text-white font-inter w-full h-12"
-                  >
-                    Calculate CGPA
-                  </Button>
-                </motion.div>
-              </div>
-            </CardContent>
-          </Card>
-        </ShimmerCard>
+                    <Button
+                      onClick={calculateResult}
+                      className="bg-[#000000] hover:bg-[#333333] text-white font-inter w-full h-12"
+                    >
+                      Calculate CGPA
+                    </Button>
+                  </motion.div>
+                </div>
+              </CardContent>
+            </Card>
+          </ShimmerCard>
+        </MovingBorder>
       </motion.div>
 
       <ResultModal
