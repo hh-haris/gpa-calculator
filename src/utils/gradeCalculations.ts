@@ -2,15 +2,15 @@
 export interface Subject {
   id: string;
   name: string;
-  marks: number | string;
+  marks: number;
   creditHours: number;
 }
 
 export interface Semester {
   id: string;
   name: string;
-  gpa: number | string;
-  totalCreditHours: number | string;
+  gpa: number;
+  totalCreditHours: number;
 }
 
 export const getPercentage = (marks: number): number => {
@@ -86,7 +86,7 @@ export const getRemarks = (percentage: number): string => {
   return "Fail";
 };
 
-export const calculateGPA = (subjects: (Subject & { marks: number })[]): number => {
+export const calculateGPA = (subjects: Subject[]): number => {
   let totalGradePoints = 0;
   let totalCreditHours = 0;
 
@@ -102,7 +102,7 @@ export const calculateGPA = (subjects: (Subject & { marks: number })[]): number 
   return totalGradePoints / totalCreditHours;
 };
 
-export const calculateCGPA = (semesters: (Semester & { gpa: number; totalCreditHours: number })[]): number => {
+export const calculateCGPA = (semesters: Semester[]): number => {
   let totalWeightedGPA = 0;
   let totalCreditHours = 0;
 

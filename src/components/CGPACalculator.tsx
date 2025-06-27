@@ -1,21 +1,20 @@
 import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Plus, Trash2, GraduationCap, Target, BookOpen } from 'lucide-react';
 import { Semester, calculateCGPA, getGPAPercentage, getLetterGrade, getRemarks } from '@/utils/gradeCalculations';
 import { useToast } from '@/hooks/use-toast';
-import GlassResultModal from './GlassResultModal';
+import ResultModal from './ResultModal';
 import ShimmerCard from './ShimmerCard';
 import { motion } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import jsPDF from 'jspdf';
-import { LiquidButton } from '@/components/ui/liquid-button';
-import { Button } from '@/components/ui/stateful-button';
 
 const CGPACalculator = () => {
   const [semesters, setSemesters] = useState<Semester[]>([
-    { id: '1', name: 'Semester 1', gpa: '', totalCreditHours: '' }
+    { id: '1', name: 'Semester 1', gpa: 0, totalCreditHours: 0 }
   ]);
   const [result, setResult] = useState<null | {
     gpa: number;
@@ -27,6 +26,7 @@ const CGPACalculator = () => {
 
   const triggerConfetti = (cgpa: number) => {
     if (cgpa >= 3) {
+      // Create a temporary canvas with higher z-index for confetti
       const canvas = document.createElement('canvas');
       canvas.style.position = 'fixed';
       canvas.style.top = '0';
@@ -34,12 +34,13 @@ const CGPACalculator = () => {
       canvas.style.width = '100vw';
       canvas.style.height = '100vh';
       canvas.style.pointerEvents = 'none';
-      canvas.style.zIndex = '99999';
+      canvas.style.zIndex = '99999'; // Higher than modal
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
       document.body.appendChild(canvas);
 
-      const duration = 600; // Reduced duration
+      // Colorful confetti with reduced density and shorter duration
+      const duration = 1000; // 1 second
       const end = Date.now() + duration;
       const colors = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEAA7", "#DDA0DD", "#98D8C8"];
 
@@ -50,29 +51,42 @@ const CGPACalculator = () => {
 
       const frame = () => {
         if (Date.now() > end) {
+          // Remove the canvas after confetti is done
           document.body.removeChild(canvas);
           return;
         }
 
-        // Reduced particle count for lower density
+        // Left side confetti
         myConfetti({
-          particleCount: 1, // Reduced from 2
+          particleCount: 3,
           angle: 60,
-          spread: 45, // Reduced spread
+          spread: 55,
           origin: { x: 0, y: 0.6 },
           colors: colors,
-          gravity: 0.9,
-          scalar: 0.7, // Reduced size
+          gravity: 0.8,
+          scalar: 0.8,
         });
 
+        // Right side confetti
         myConfetti({
-          particleCount: 1, // Reduced from 2
+          particleCount: 3,
           angle: 120,
-          spread: 45, // Reduced spread
+          spread: 55,
           origin: { x: 1, y: 0.6 },
           colors: colors,
-          gravity: 0.9,
-          scalar: 0.7, // Reduced size
+          gravity: 0.8,
+          scalar: 0.8,
+        });
+
+        // Center confetti
+        myConfetti({
+          particleCount: 2,
+          angle: 90,
+          spread: 45,
+          origin: { x: 0.5, y: 0.6 },
+          colors: colors,
+          gravity: 0.8,
+          scalar: 0.8,
         });
 
         requestAnimationFrame(frame);
@@ -86,8 +100,8 @@ const CGPACalculator = () => {
     const newSemester: Semester = {
       id: Date.now().toString(),
       name: `Semester ${semesterNumber}`,
-      gpa: '',
-      totalCreditHours: ''
+      gpa: 0,
+      totalCreditHours: 0
     };
     setSemesters([...semesters, newSemester]);
   };
@@ -104,10 +118,9 @@ const CGPACalculator = () => {
     ));
   };
 
-  const calculateResult = async () => {
+  const calculateResult = () => {
     const validSemesters = semesters.filter(semester => 
-      semester.gpa !== '' && semester.totalCreditHours !== '' &&
-      Number(semester.gpa) >= 0 && Number(semester.gpa) <= 4 && Number(semester.totalCreditHours) > 0
+      semester.gpa >= 0 && semester.gpa <= 4 && semester.totalCreditHours > 0
     );
 
     if (validSemesters.length === 0) {
@@ -119,16 +132,7 @@ const CGPACalculator = () => {
       return;
     }
 
-    // Simulate processing time
-    await new Promise(resolve => setTimeout(resolve, 1500));
-
-    const processedSemesters = validSemesters.map(semester => ({
-      ...semester,
-      gpa: Number(semester.gpa),
-      totalCreditHours: Number(semester.totalCreditHours)
-    }));
-
-    const cgpa = calculateCGPA(processedSemesters);
+    const cgpa = calculateCGPA(validSemesters);
     const percentage = getGPAPercentage(cgpa);
     const grade = getLetterGrade(percentage);
     const remarks = getRemarks(percentage);
@@ -136,6 +140,7 @@ const CGPACalculator = () => {
     setResult({ gpa: cgpa, grade, remarks });
     setShowModal(true);
     
+    // Trigger confetti after a short delay
     setTimeout(() => triggerConfetti(cgpa), 500);
   };
 
@@ -145,15 +150,19 @@ const CGPACalculator = () => {
     try {
       const doc = new jsPDF();
       
+      // Set font
       doc.setFont('helvetica');
       
+      // Title
       doc.setFontSize(20);
-      doc.setTextColor(0, 136, 204);
+      doc.setTextColor(0, 136, 204); // #0088CC
       doc.text('UoH CGPA Calculator Results', 20, 30);
       
-      doc.setDrawColor(238, 238, 238);
+      // Horizontal line
+      doc.setDrawColor(238, 238, 238); // #EEEEEE
       doc.line(20, 35, 190, 35);
       
+      // Results section
       doc.setFontSize(14);
       doc.setTextColor(0, 0, 0);
       doc.text('Results:', 20, 50);
@@ -163,34 +172,37 @@ const CGPACalculator = () => {
       doc.text(`Grade: ${result.grade}`, 30, 75);
       doc.text(`Remarks: ${result.remarks}`, 30, 85);
       
+      // Semester details section
       doc.setFontSize(14);
       doc.text('Semester Details:', 20, 105);
       
       doc.setFontSize(10);
       let yPosition = 120;
       semesters.forEach((semester, index) => {
-        if (yPosition > 270) {
+        if (yPosition > 270) { // Check if we need a new page
           doc.addPage();
           yPosition = 20;
         }
         doc.text(
-          `${index + 1}. ${semester.name}: GPA ${semester.gpa} (${semester.totalCreditHours} credit hours)`,
+          `${index + 1}. ${semester.name}: GPA ${semester.gpa.toFixed(2)} (${semester.totalCreditHours} credit hours)`,
           30,
           yPosition
         );
         yPosition += 10;
       });
       
+      // Footer
       if (yPosition > 250) {
         doc.addPage();
         yPosition = 20;
       }
       
       doc.setFontSize(8);
-      doc.setTextColor(151, 151, 151);
+      doc.setTextColor(151, 151, 151); // #979797
       doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, yPosition + 20);
       doc.text('Prepared by students of Batch 2024 – AI Section A & B', 20, yPosition + 30);
       
+      // Save the PDF
       doc.save(`CGPA_Results_${new Date().toISOString().split('T')[0]}.pdf`);
       
       toast({
@@ -216,9 +228,9 @@ const CGPACalculator = () => {
         transition={{ duration: 0.5 }}
       >
         <ShimmerCard>
-          <Card className="border-2 border-[#EEEEEE] dark:border-gray-700">
-            <CardHeader className="bg-[#EEEEEE] dark:bg-gray-800 p-4 sm:p-6">
-              <CardTitle className="font-jakarta font-semibold text-[#000000] dark:text-white text-lg sm:text-xl flex items-center">
+          <Card className="border-2 border-[#EEEEEE]">
+            <CardHeader className="bg-[#EEEEEE] p-4 sm:p-6">
+              <CardTitle className="font-jakarta font-semibold text-[#000000] text-lg sm:text-xl flex items-center">
                 <GraduationCap size={20} className="mr-2 text-[#0088CC]" />
                 Add Semesters
               </CardTitle>
@@ -233,64 +245,61 @@ const CGPACalculator = () => {
                     transition={{ duration: 0.3, delay: index * 0.1 }}
                     className="relative overflow-hidden"
                   >
-                    <ShimmerCard>
-                      <div className="relative bg-white dark:bg-gray-800 p-4 rounded-lg border border-[#EEEEEE] dark:border-gray-600">
-                        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                          <div>
-                            <Label className="font-inter text-[#000000] dark:text-white text-sm flex items-center mb-2">
-                              <BookOpen size={16} className="mr-1 text-[#979797]" />
-                              Semester Name
-                            </Label>
-                            <Input
-                              value={semester.name}
-                              onChange={(e) => updateSemester(semester.id, 'name', e.target.value)}
-                              placeholder="Enter semester name"
-                              className="border-[#979797] dark:border-gray-600 focus:border-[#0088CC] text-sm sm:text-base"
-                            />
-                          </div>
-                          <div>
-                            <Label className="font-inter text-[#000000] dark:text-white text-sm flex items-center mb-2">
-                              <Target size={16} className="mr-1 text-[#979797]" />
-                              GPA (0-4)
-                            </Label>
-                            <Input
-                              type="number"
-                              min="0"
-                              max="4"
-                              step="0.01"
-                              value={semester.gpa}
-                              onChange={(e) => updateSemester(semester.id, 'gpa', e.target.value)}
-                              placeholder="Enter GPA"
-                              className="border-[#979797] dark:border-gray-600 focus:border-[#0088CC] text-sm sm:text-base"
-                            />
-                          </div>
-                          <div>
-                            <Label className="font-inter text-[#000000] dark:text-white text-sm mb-2 block">
-                              Total Credit Hours
-                            </Label>
-                            <Input
-                              type="number"
-                              min="1"
-                              value={semester.totalCreditHours}
-                              onChange={(e) => updateSemester(semester.id, 'totalCreditHours', e.target.value)}
-                              placeholder="Enter credit hours"
-                              className="border-[#979797] dark:border-gray-600 focus:border-[#0088CC] text-sm sm:text-base"
-                            />
-                          </div>
-                          <div className="flex items-end">
-                            <LiquidButton
-                              variant="default"
-                              size="default"
-                              onClick={() => removeSemester(semester.id)}
-                              disabled={semesters.length === 1}
-                              className="border-[#979797] dark:border-gray-600 text-[#979797] hover:bg-[#EEEEEE] dark:hover:bg-gray-700 w-full sm:w-auto"
-                            >
-                              <Trash2 size={16} />
-                            </LiquidButton>
-                          </div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-[#0088CC]/5 via-transparent to-[#0088CC]/5 rounded-lg"></div>
+                    <div className="relative bg-white p-4 rounded-lg border border-[#EEEEEE]">
+                      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                        <div>
+                          <Label className="font-inter text-[#000000] text-sm flex items-center mb-2">
+                            <BookOpen size={16} className="mr-1 text-[#979797]" />
+                            Semester Name
+                          </Label>
+                          <Input
+                            value={semester.name}
+                            onChange={(e) => updateSemester(semester.id, 'name', e.target.value)}
+                            placeholder="Enter semester name"
+                            className="border-[#979797] focus:border-[#0088CC] text-sm sm:text-base"
+                          />
+                        </div>
+                        <div>
+                          <Label className="font-inter text-[#000000] text-sm flex items-center mb-2">
+                            <Target size={16} className="mr-1 text-[#979797]" />
+                            GPA (0-4)
+                          </Label>
+                          <Input
+                            type="number"
+                            min="0"
+                            max="4"
+                            step="0.01"
+                            value={semester.gpa}
+                            onChange={(e) => updateSemester(semester.id, 'gpa', Number(e.target.value))}
+                            className="border-[#979797] focus:border-[#0088CC] text-sm sm:text-base"
+                          />
+                        </div>
+                        <div>
+                          <Label className="font-inter text-[#000000] text-sm mb-2 block">
+                            Total Credit Hours
+                          </Label>
+                          <Input
+                            type="number"
+                            min="1"
+                            value={semester.totalCreditHours}
+                            onChange={(e) => updateSemester(semester.id, 'totalCreditHours', Number(e.target.value))}
+                            className="border-[#979797] focus:border-[#0088CC] text-sm sm:text-base"
+                          />
+                        </div>
+                        <div className="flex items-end">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => removeSemester(semester.id)}
+                            disabled={semesters.length === 1}
+                            className="border-[#979797] text-[#979797] hover:bg-[#EEEEEE] w-full sm:w-auto"
+                          >
+                            <Trash2 size={16} />
+                          </Button>
                         </div>
                       </div>
-                    </ShimmerCard>
+                    </div>
                   </motion.div>
                 ))}
               </div>
@@ -299,26 +308,24 @@ const CGPACalculator = () => {
                 <motion.div
                   className="flex-1"
                   whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  <LiquidButton
+                  <Button
                     onClick={addSemester}
-                    className="bg-[#0088CC] hover:bg-[#0077BB] text-white font-inter w-full h-12 transition-all duration-300"
-                    size="xxl"
+                    className="bg-[#0088CC] hover:bg-[#0077BB] text-white font-inter w-full h-12"
                   >
                     <Plus size={16} className="mr-2" />
                     Add Semester
-                  </LiquidButton>
+                  </Button>
                 </motion.div>
                 <motion.div
                   className="flex-1"
                   whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileTap={{ scale: 0.98 }}
                 >
                   <Button
                     onClick={calculateResult}
-                    className="bg-[#000000] hover:bg-[#333333] text-white font-inter w-full h-12 transition-all duration-300"
-                    loadingText="Calculating..."
+                    className="bg-[#000000] hover:bg-[#333333] text-white font-inter w-full h-12"
                   >
                     Calculate CGPA
                   </Button>
@@ -329,7 +336,7 @@ const CGPACalculator = () => {
         </ShimmerCard>
       </motion.div>
 
-      <GlassResultModal
+      <ResultModal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
         result={result || { gpa: 0, grade: '', remarks: '' }}
