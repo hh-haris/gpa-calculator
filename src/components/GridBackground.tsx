@@ -4,16 +4,16 @@ import React from "react";
 
 export function GridBackground() {
   return (
-    <div className="fixed inset-0 -z-10">
+    <div className="fixed inset-0 -z-10 bg-white">
       <div
         className={cn(
-          "absolute inset-0",
+          "absolute inset-0 opacity-100",
           "[background-size:20px_20px] sm:[background-size:40px_40px]",
-          "[background-image:linear-gradient(to_right,rgba(228,228,231,0.2)_1px,transparent_1px),linear-gradient(to_bottom,rgba(228,228,231,0.2)_1px,transparent_1px)]",
+          "[background-image:linear-gradient(to_right,rgba(0,0,0,0.1)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.1)_1px,transparent_1px)]",
         )}
       />
-      {/* Radial gradient for faded look */}
-      <div className="pointer-events-none absolute inset-0 bg-white [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
+      {/* Subtle radial gradient for center focus */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-radial from-transparent via-transparent to-white/30"></div>
     </div>
   );
 }

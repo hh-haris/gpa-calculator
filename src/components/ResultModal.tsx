@@ -1,6 +1,7 @@
+
 import React, { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { X, Target, Award, MessageSquare, Download } from 'lucide-react';
+import { X, Target, Award, MessageSquare, Download, Share } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface ResultModalProps {
@@ -54,6 +55,22 @@ const ResultModal = ({ isOpen, onClose, result, onExport }: ResultModalProps) =>
     e.preventDefault();
     e.stopPropagation();
     onExport();
+  };
+
+  const handleWhatsAppShare = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const message = `🎓 My GPA Results from UoH Calculator:
+    
+📊 GPA: ${result.gpa.toFixed(2)}
+🏆 Grade: ${result.grade}
+💬 Remarks: ${result.remarks}
+
+Calculated using UoH GPA Calculator ✨`;
+    
+    const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
   };
 
   if (!isOpen) return null;
@@ -166,25 +183,44 @@ const ResultModal = ({ isOpen, onClose, result, onExport }: ResultModalProps) =>
             </motion.div>
           </div>
           
-          {/* Export Button */}
-          <motion.div
-            className="text-center relative z-10"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <Button
-              onClick={handleExportClick}
-              className="bg-[#0088CC] hover:bg-[#0077BB] text-white font-inter w-full transition-all duration-200"
-              type="button"
-              style={{ pointerEvents: 'auto' }}
+          {/* Action Buttons */}
+          <div className="space-y-3 relative z-10">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
             >
-              <Download size={16} className="mr-2" />
-              Export as PDF
-            </Button>
-          </motion.div>
+              <Button
+                onClick={handleExportClick}
+                className="bg-[#0088CC] hover:bg-[#0077BB] text-white font-inter w-full transition-all duration-200"
+                type="button"
+                style={{ pointerEvents: 'auto' }}
+              >
+                <Download size={16} className="mr-2" />
+                Export as PDF
+              </Button>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Button
+                onClick={handleWhatsAppShare}
+                className="bg-green-500 hover:bg-green-600 text-white font-inter w-full transition-all duration-200"
+                type="button"
+                style={{ pointerEvents: 'auto' }}
+              >
+                <Share size={16} className="mr-2" />
+                Share on WhatsApp
+              </Button>
+            </motion.div>
+          </div>
         </motion.div>
       </motion.div>
     </AnimatePresence>

@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Menu, Calculator, GraduationCap, BookOpen, Target } from "lucide-react";
+import { X, Menu, BarChart3, Trophy, GraduationCap } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface SidebarLinkProps {
@@ -9,6 +9,7 @@ interface SidebarLinkProps {
     label: string;
     href: string;
     icon: React.ReactNode;
+    disabled?: boolean;
   };
   className?: string;
 }
@@ -16,11 +17,15 @@ interface SidebarLinkProps {
 const SidebarLink = ({ link, className }: SidebarLinkProps) => {
   return (
     <a
-      href={link.href}
+      href={link.disabled ? "#" : link.href}
       className={cn(
-        "flex items-center justify-start gap-2 group/sidebar py-2 px-3 rounded-md hover:bg-[#EEEEEE] transition-colors",
+        "flex items-center justify-start gap-2 group/sidebar py-2 px-3 rounded-md transition-colors",
+        link.disabled 
+          ? "text-gray-400 cursor-not-allowed" 
+          : "hover:bg-[#EEEEEE] text-[#000000]",
         className
       )}
+      onClick={link.disabled ? (e) => e.preventDefault() : undefined}
     >
       {link.icon}
       <motion.span
@@ -28,7 +33,12 @@ const SidebarLink = ({ link, className }: SidebarLinkProps) => {
           display: "inline-block",
           opacity: 1,
         }}
-        className="text-sm font-medium text-[#000000] group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre"
+        className={cn(
+          "text-sm font-medium transition duration-150 whitespace-pre",
+          link.disabled 
+            ? "text-gray-400" 
+            : "group-hover/sidebar:translate-x-1"
+        )}
       >
         {link.label}
       </motion.span>
@@ -44,24 +54,20 @@ interface AppSidebarProps {
 export function AppSidebar({ open, setOpen }: AppSidebarProps) {
   const links = [
     {
-      label: "GPA Calculator",
-      href: "#gpa",
-      icon: <Calculator className="h-5 w-5 shrink-0 text-[#0088CC]" />,
+      label: "Smart Analytics",
+      href: "#analytics",
+      icon: <BarChart3 className="h-5 w-5 shrink-0 text-[#0088CC]" />,
     },
     {
-      label: "CGPA Calculator",
-      href: "#cgpa",
-      icon: <GraduationCap className="h-5 w-5 shrink-0 text-[#0088CC]" />,
+      label: "GPA Wall",
+      href: "#gpa-wall",
+      icon: <Trophy className="h-5 w-5 shrink-0 text-[#0088CC]" />,
     },
     {
-      label: "Grade Guide",
-      href: "#guide",
-      icon: <BookOpen className="h-5 w-5 shrink-0 text-[#0088CC]" />,
-    },
-    {
-      label: "Tips & Tricks",
-      href: "#tips",
-      icon: <Target className="h-5 w-5 shrink-0 text-[#0088CC]" />,
+      label: "AI Study Assistant",
+      href: "#ai-assistant",
+      icon: <GraduationCap className="h-5 w-5 shrink-0 text-gray-400" />,
+      disabled: true,
     },
   ];
 
@@ -102,6 +108,13 @@ export function AppSidebar({ open, setOpen }: AppSidebarProps) {
                 {links.map((link, idx) => (
                   <SidebarLink key={idx} link={link} />
                 ))}
+              </div>
+              
+              {/* Special notice for disabled option */}
+              <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                <p className="text-xs text-blue-600 font-inter">
+                  <strong>AI Study Assistant</strong> is only available for 2024 Batch AI Students of Section A and B
+                </p>
               </div>
             </div>
 
