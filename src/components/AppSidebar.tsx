@@ -1,8 +1,9 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Menu, BarChart3, Trophy, GraduationCap } from "lucide-react";
+import { X, Menu, BarChart3, Trophy, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useNavigate } from "react-router-dom";
 
 interface SidebarLinkProps {
   link: {
@@ -12,20 +13,37 @@ interface SidebarLinkProps {
     disabled?: boolean;
   };
   className?: string;
+  onClick?: () => void;
 }
 
-const SidebarLink = ({ link, className }: SidebarLinkProps) => {
+const SidebarLink = ({ link, className, onClick }: SidebarLinkProps) => {
+  const navigate = useNavigate();
+  
+  const handleClick = (e: React.MouseEvent) => {
+    if (link.disabled) {
+      e.preventDefault();
+      return;
+    }
+    
+    if (onClick) {
+      onClick();
+    }
+    
+    if (link.href.startsWith('/')) {
+      navigate(link.href);
+    }
+  };
+
   return (
-    <a
-      href={link.disabled ? "#" : link.href}
+    <button
+      onClick={handleClick}
       className={cn(
-        "flex items-center justify-start gap-2 group/sidebar py-2 px-3 rounded-md transition-colors",
+        "flex items-center justify-start gap-2 group/sidebar py-2 px-3 rounded-md transition-colors w-full text-left",
         link.disabled 
           ? "text-gray-400 cursor-not-allowed" 
           : "hover:bg-[#EEEEEE] text-[#000000]",
         className
       )}
-      onClick={link.disabled ? (e) => e.preventDefault() : undefined}
     >
       {link.icon}
       <motion.span
@@ -42,7 +60,7 @@ const SidebarLink = ({ link, className }: SidebarLinkProps) => {
       >
         {link.label}
       </motion.span>
-    </a>
+    </button>
   );
 };
 
@@ -55,18 +73,18 @@ export function AppSidebar({ open, setOpen }: AppSidebarProps) {
   const links = [
     {
       label: "Smart Analytics",
-      href: "#analytics",
+      href: "/analytics",
       icon: <BarChart3 className="h-5 w-5 shrink-0 text-[#0088CC]" />,
     },
     {
       label: "GPA Wall",
-      href: "#gpa-wall",
+      href: "/gpa-wall",
       icon: <Trophy className="h-5 w-5 shrink-0 text-[#0088CC]" />,
     },
     {
-      label: "AI Study Assistant",
-      href: "#ai-assistant",
-      icon: <GraduationCap className="h-5 w-5 shrink-0 text-gray-400" />,
+      label: "Suggest",
+      href: "/suggest",
+      icon: <MessageSquare className="h-5 w-5 shrink-0 text-gray-400" />,
       disabled: true,
     },
   ];
@@ -92,8 +110,8 @@ export function AppSidebar({ open, setOpen }: AppSidebarProps) {
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
             className="fixed left-0 top-0 h-full w-64 bg-white shadow-2xl z-50 flex flex-col border-r border-[#EEEEEE]"
           >
-            {/* Close button */}
-            <div className="flex justify-end p-4">
+            {/* Close button - moved down to avoid sticky banner */}
+            <div className="flex justify-end p-4 pt-16">
               <button
                 onClick={() => setOpen(false)}
                 className="p-2 rounded-md hover:bg-[#EEEEEE] transition-colors"
@@ -106,14 +124,18 @@ export function AppSidebar({ open, setOpen }: AppSidebarProps) {
             <div className="flex-1 overflow-x-hidden overflow-y-auto px-4">
               <div className="flex flex-col gap-2">
                 {links.map((link, idx) => (
-                  <SidebarLink key={idx} link={link} />
+                  <SidebarLink 
+                    key={idx} 
+                    link={link} 
+                    onClick={() => setOpen(false)}
+                  />
                 ))}
               </div>
               
               {/* Special notice for disabled option */}
-              <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                <p className="text-xs text-blue-600 font-inter">
-                  <strong>AI Study Assistant</strong> is only available for 2024 Batch AI Students of Section A and B
+              <div className="mt-4 p-3 bg-[#FAE6B4] rounded-lg border border-[#FAE6B4]">
+                <p className="text-xs text-[#979797] font-inter">
+                  <strong>Suggest</strong> is only available for 2024 Batch AI Students of Section A and B
                 </p>
               </div>
             </div>

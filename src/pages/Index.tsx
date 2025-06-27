@@ -5,7 +5,6 @@ import { StickyBanner } from '@/components/ui/sticky-banner';
 import GPACalculator from '@/components/GPACalculator';
 import CGPACalculator from '@/components/CGPACalculator';
 import FluidTabs from '@/components/FluidTabs';
-import SpinningText from '@/components/SpinningText';
 import { GridBackground } from '@/components/GridBackground';
 import { AppSidebar, SidebarTrigger } from '@/components/AppSidebar';
 import { motion } from 'framer-motion';
@@ -65,10 +64,7 @@ const Index = () => {
             </div>
           </div>
           
-          {/* Spinning Text - positioned absolutely in top right */}
-          <SpinningText />
-          
-          {/* Warning Banner without Moving Border */}
+          {/* Warning Banner */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
