@@ -47,9 +47,6 @@ const Index = () => {
       <StickyBanner className="bg-gradient-to-r from-[#0088CC] to-[#0077BB]">
         <p className="mx-0 max-w-[90%] text-white drop-shadow-md font-inter text-xs sm:text-sm">
           Welcome to UoH GPA Calculator - Your academic companion.{" "}
-          <a href="#" className="transition duration-200 hover:underline font-medium">
-            Learn more
-          </a>
         </p>
       </StickyBanner>
 
