@@ -66,7 +66,7 @@ function SpinningText() {
                   top: '50%',
                   transform: `
                     rotate(${(360 / total) * index}deg)
-                    translateY(-2.8em)
+                    translateY(-0.8em)
                   `,
                   transformOrigin: 'center',
                 }}
