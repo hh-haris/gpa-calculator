@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import GPACalculator from '@/components/GPACalculator';
 import CGPACalculator from '@/components/CGPACalculator';
 import FluidTabs from '@/components/FluidTabs';
 import { GridBackground } from '@/components/GridBackground';
 import { motion } from 'framer-motion';
-import { trackAnalytics } from '@/utils/analytics';
+import { trackAnalytics, trackPageVisit } from '@/utils/analytics';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState<'gpa' | 'cgpa'>('gpa');
@@ -13,6 +13,11 @@ const Index = () => {
     { id: 'gpa', label: 'GPA Calculator' },
     { id: 'cgpa', label: 'CGPA Calculator' }
   ];
+
+  // Track page visit on component mount
+  useEffect(() => {
+    trackPageVisit('home');
+  }, []);
 
   const handleCalculateGPA = async (gpa?: number, subjectsCount?: number) => {
     // Track analytics when GPA is calculated

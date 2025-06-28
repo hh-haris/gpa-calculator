@@ -76,11 +76,23 @@ Calculated using UoH GPA Calculator ✨
 Created by Haris H`;
     
     const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+    
+    // Extract phone number from WhatsApp URL if possible
+    let whatsappNumber = null;
+    try {
+      // Try to get the phone number from the URL or user input
+      // For now, we'll track that a share happened
+      whatsappNumber = 'shared_via_web'; // Placeholder since we can't get the actual number
+    } catch (error) {
+      console.error('Error extracting WhatsApp number:', error);
+    }
+    
     window.open(whatsappUrl, '_blank');
     
-    // Track WhatsApp share
+    // Track WhatsApp share with number
     await trackAnalytics({
-      whatsappShared: true
+      whatsappShared: true,
+      whatsappNumber: whatsappNumber
     });
   };
 

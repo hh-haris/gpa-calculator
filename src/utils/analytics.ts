@@ -57,12 +57,18 @@ export const trackAnalytics = async (data: {
   const returning = isReturningUser();
   
   try {
+    console.log('Starting analytics tracking...', data);
+    
     // Get current analytics data
-    const { data: existing } = await supabase
+    const { data: existing, error: fetchError } = await supabase
       .from('user_analytics')
       .select('*')
       .eq('session_id', sessionId)
       .single();
+
+    if (fetchError && fetchError.code !== 'PGRST116') {
+      console.error('Error fetching existing analytics:', fetchError);
+    }
 
     // Calculate updated counts
     const calculationCount = (existing?.calculation_count || 0) + (data.gpaCalculated ? 1 : 0);
@@ -87,53 +93,73 @@ export const trackAnalytics = async (data: {
       updateData.subjects_count = data.subjectsCount;
     }
 
-    // Track PDF downloads
-    if (data.pdfDownloaded) {
-      // Store PDF download event separately for detailed tracking
-      await supabase
-        .from('user_analytics')
-        .insert({
-          session_id: sessionId,
-          device_type: deviceType,
-          user_agent: navigator.userAgent,
-          event_type: 'pdf_download',
-          event_data: {
-            timestamp: new Date().toISOString(),
-            gpa: existing?.gpa_calculated || null
-          }
-        });
-    }
-
-    // Track WhatsApp shares
-    if (data.whatsappShared) {
-      // Store WhatsApp share event separately for detailed tracking
-      await supabase
-        .from('user_analytics')
-        .insert({
-          session_id: sessionId,
-          device_type: deviceType,
-          user_agent: navigator.userAgent,
-          event_type: 'whatsapp_share',
-          event_data: {
-            timestamp: new Date().toISOString(),
-            gpa: existing?.gpa_calculated || null,
-            whatsapp_number: data.whatsappNumber || null
-          }
-        });
-    }
-
     // Update or insert main analytics record
-    await supabase
+    const { error: upsertError } = await supabase
       .from('user_analytics')
       .upsert(updateData, {
         onConflict: 'session_id'
       });
 
+    if (upsertError) {
+      console.error('Error upserting analytics:', upsertError);
+      throw upsertError;
+    }
+
+    // Track PDF downloads as separate event
+    if (data.pdfDownloaded) {
+      const { error: pdfError } = await supabase
+        .from('analytics_events')
+        .insert({
+          session_id: sessionId,
+          event_type: 'pdf_download',
+          event_data: {
+            timestamp: new Date().toISOString(),
+            gpa: existing?.gpa_calculated || data.gpaCalculated || null,
+            subjects_count: data.subjectsCount || null
+          },
+          user_agent: navigator.userAgent,
+          device_type: deviceType,
+          ip_address: ipAddress
+        });
+
+      if (pdfError) {
+        console.error('Error tracking PDF download:', pdfError);
+      } else {
+        console.log('PDF download tracked successfully');
+      }
+    }
+
+    // Track WhatsApp shares as separate event with phone number
+    if (data.whatsappShared) {
+      const { error: whatsappError } = await supabase
+        .from('analytics_events')
+        .insert({
+          session_id: sessionId,
+          event_type: 'whatsapp_share',
+          event_data: {
+            timestamp: new Date().toISOString(),
+            gpa: existing?.gpa_calculated || data.gpaCalculated || null,
+            subjects_count: data.subjectsCount || null,
+            whatsapp_number: data.whatsappNumber || null,
+            shared_via: 'whatsapp_web'
+          },
+          user_agent: navigator.userAgent,
+          device_type: deviceType,
+          ip_address: ipAddress
+        });
+
+      if (whatsappError) {
+        console.error('Error tracking WhatsApp share:', whatsappError);
+      } else {
+        console.log('WhatsApp share tracked successfully with number:', data.whatsappNumber);
+      }
+    }
+
     if (!returning) {
       markAsVisited();
     }
 
-    console.log('Enhanced analytics tracked:', {
+    console.log('Analytics tracked successfully:', {
       sessionId,
       deviceType,
       returning,
@@ -142,6 +168,7 @@ export const trackAnalytics = async (data: {
       subjects: data.subjectsCount,
       pdfDownload: data.pdfDownloaded,
       whatsappShare: data.whatsappShared,
+      whatsappNumber: data.whatsappNumber,
       ipAddress
     });
   } catch (error) {
@@ -149,7 +176,7 @@ export const trackAnalytics = async (data: {
     
     // Fallback: try to at least store basic session info
     try {
-      await supabase
+      const { error: fallbackError } = await supabase
         .from('user_analytics')
         .upsert({
           session_id: sessionId,
@@ -160,6 +187,10 @@ export const trackAnalytics = async (data: {
         }, {
           onConflict: 'session_id'
         });
+
+      if (fallbackError) {
+        console.error('Fallback analytics tracking also failed:', fallbackError);
+      }
     } catch (fallbackError) {
       console.error('Fallback analytics tracking also failed:', fallbackError);
     }
@@ -175,7 +206,7 @@ export const trackPageVisit = async (page: string) => {
   try {
     const ipAddress = await getIPAddress();
     
-    await supabase
+    const { error } = await supabase
       .from('user_analytics')
       .upsert({
         session_id: sessionId,
@@ -189,6 +220,12 @@ export const trackPageVisit = async (page: string) => {
       }, {
         onConflict: 'session_id'
       });
+
+    if (error) {
+      console.error('Page visit tracking error:', error);
+    } else {
+      console.log('Page visit tracked successfully:', page);
+    }
 
     if (!returning) {
       markAsVisited();
@@ -223,5 +260,31 @@ export const getUserAnalyticsSummary = async () => {
   } catch (error) {
     console.error('Error getting analytics summary:', error);
     return null;
+  }
+};
+
+// Get WhatsApp sharing analytics
+export const getWhatsAppAnalytics = async () => {
+  try {
+    const { data, error } = await supabase
+      .from('analytics_events')
+      .select('*')
+      .eq('event_type', 'whatsapp_share')
+      .order('created_at', { ascending: false });
+    
+    if (error) throw error;
+    
+    return data.map(event => ({
+      id: event.id,
+      sessionId: event.session_id,
+      timestamp: event.created_at,
+      gpa: event.event_data?.gpa,
+      whatsappNumber: event.event_data?.whatsapp_number,
+      deviceType: event.device_type,
+      ipAddress: event.ip_address
+    }));
+  } catch (error) {
+    console.error('Error getting WhatsApp analytics:', error);
+    return [];
   }
 };
