@@ -73,7 +73,7 @@ const ResultModal = ({ isOpen, onClose, result, onExport }: ResultModalProps) =>
 💬 Remarks: ${result.remarks}
 
 Calculated using UoH GPA Calculator ✨
-Created with by Haris H`;
+Created by Haris H`;
     
     const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
