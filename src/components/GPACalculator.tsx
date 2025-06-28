@@ -226,7 +226,7 @@ const GPACalculator = ({ onCalculate }: GPACalculatorProps) => {
       doc.setFontSize(8);
       doc.setTextColor(151, 151, 151); // #979797
       doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, yPosition + 20);
-      doc.text('Prepared by students of Batch 2024 – AI Section A & B', 20, yPosition + 30);
+      doc.text('Created with ❤️ by Haris H', 20, yPosition + 30);
       
       // Save the PDF
       doc.save(`GPA_Results_${new Date().toISOString().split('T')[0]}.pdf`);

@@ -44,41 +44,57 @@ export const getIPAddress = async (): Promise<string | null> => {
   }
 };
 
-// Track analytics
+// Track analytics with enhanced data
 export const trackAnalytics = async (data: {
   gpaCalculated?: number;
   subjectsCount?: number;
+  pdfDownloaded?: boolean;
+  whatsappShared?: boolean;
+  whatsappNumber?: string;
 }) => {
   const sessionId = getSessionId();
   const deviceType = getDeviceType();
   const returning = isReturningUser();
   
   try {
-    // Get current calculation count
+    // Get current analytics data
     const { data: existing } = await supabase
       .from('user_analytics')
-      .select('calculation_count')
+      .select('*')
       .eq('session_id', sessionId)
       .single();
 
     const calculationCount = (existing?.calculation_count || 0) + (data.gpaCalculated ? 1 : 0);
+    const pdfDownloadCount = (existing?.pdf_download_count || 0) + (data.pdfDownloaded ? 1 : 0);
+    const whatsappShareCount = (existing?.whatsapp_share_count || 0) + (data.whatsappShared ? 1 : 0);
 
     // Get IP address
     const ipAddress = await getIPAddress();
 
+    const updateData: any = {
+      session_id: sessionId,
+      device_type: deviceType,
+      user_agent: navigator.userAgent,
+      is_returning_user: returning,
+      calculation_count: calculationCount,
+      pdf_download_count: pdfDownloadCount,
+      whatsapp_share_count: whatsappShareCount,
+      ip_address: ipAddress,
+      updated_at: new Date().toISOString()
+    };
+
+    if (data.gpaCalculated) {
+      updateData.gpa_calculated = data.gpaCalculated;
+      updateData.subjects_count = data.subjectsCount;
+    }
+
+    if (data.whatsappNumber) {
+      updateData.whatsapp_number = data.whatsappNumber;
+    }
+
     await supabase
       .from('user_analytics')
-      .upsert({
-        session_id: sessionId,
-        device_type: deviceType,
-        user_agent: navigator.userAgent,
-        is_returning_user: returning,
-        calculation_count: calculationCount,
-        gpa_calculated: data.gpaCalculated,
-        subjects_count: data.subjectsCount,
-        ip_address: ipAddress,
-        updated_at: new Date().toISOString()
-      }, {
+      .upsert(updateData, {
         onConflict: 'session_id'
       });
 
@@ -91,6 +107,8 @@ export const trackAnalytics = async (data: {
       deviceType,
       returning,
       calculationCount,
+      pdfDownloadCount,
+      whatsappShareCount,
       gpa: data.gpaCalculated,
       subjects: data.subjectsCount
     });

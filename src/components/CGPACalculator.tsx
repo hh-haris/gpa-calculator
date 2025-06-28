@@ -100,6 +100,15 @@ const CGPACalculator = ({ onCalculate }: CGPACalculatorProps) => {
   };
 
   const addSemester = () => {
+    if (semesters.length >= 8) {
+      toast({
+        title: "Maximum Limit Reached",
+        description: "You can add maximum 8 semesters only.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     const semesterNumber = semesters.length + 1;
     const newSemester: Semester = {
       id: Date.now().toString(),
@@ -209,7 +218,7 @@ const CGPACalculator = ({ onCalculate }: CGPACalculatorProps) => {
       doc.setFontSize(8);
       doc.setTextColor(151, 151, 151); // #979797
       doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, yPosition + 20);
-      doc.text('Prepared by students of Batch 2024 – AI Section A & B', 20, yPosition + 30);
+      doc.text('Created with ❤️ by Haris H', 20, yPosition + 30);
       
       // Save the PDF
       doc.save(`CGPA_Results_${new Date().toISOString().split('T')[0]}.pdf`);
@@ -241,7 +250,7 @@ const CGPACalculator = ({ onCalculate }: CGPACalculatorProps) => {
             <CardHeader className="bg-[#EEEEEE] p-4 sm:p-6">
               <CardTitle className="font-jakarta font-semibold text-[#000000] text-lg sm:text-xl flex items-center">
                 <GraduationCap size={20} className="mr-2 text-[#0088CC]" />
-                Add Semesters
+                Add Semesters (Max 8)
               </CardTitle>
             </CardHeader>
             <CardContent className="p-4 sm:p-6">
@@ -335,10 +344,11 @@ const CGPACalculator = ({ onCalculate }: CGPACalculatorProps) => {
                 >
                   <Button
                     onClick={addSemester}
-                    className="bg-[#0088CC] hover:bg-[#0077BB] text-white font-inter w-full h-12"
+                    disabled={semesters.length >= 8}
+                    className="bg-[#0088CC] hover:bg-[#0077BB] text-white font-inter w-full h-12 disabled:opacity-50"
                   >
                     <Plus size={16} className="mr-2" />
-                    Add Semester
+                    Add Semester ({semesters.length}/8)
                   </Button>
                 </motion.div>
                 <motion.div

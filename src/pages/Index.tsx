@@ -5,14 +5,12 @@ import GPACalculator from '@/components/GPACalculator';
 import CGPACalculator from '@/components/CGPACalculator';
 import FluidTabs from '@/components/FluidTabs';
 import { GridBackground } from '@/components/GridBackground';
-import { AppSidebar, SidebarTrigger } from '@/components/AppSidebar';
 import SpinningText from '@/components/SpinningText';
 import { motion } from 'framer-motion';
 import { trackAnalytics } from '@/utils/analytics';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState<'gpa' | 'cgpa'>('gpa');
-  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const tabs = [
     { id: 'gpa', label: 'GPA Calculator' },
@@ -37,16 +35,10 @@ const Index = () => {
       {/* Spinning Text Component */}
       <SpinningText />
       
-      {/* Sidebar */}
-      <AppSidebar open={sidebarOpen} setOpen={setSidebarOpen} />
-      
-      {/* Sidebar Trigger */}
-      <SidebarTrigger onClick={() => setSidebarOpen(true)} />
-      
       {/* Sticky Banner */}
       <StickyBanner className="bg-gradient-to-r from-[#0088CC] to-[#0077BB]">
         <p className="mx-0 max-w-[90%] text-white drop-shadow-md font-inter text-xs sm:text-sm">
-          Got an idea? Let’s build it for next semester!{" "}
+          Created with ❤️ by Haris H
         </p>
       </StickyBanner>
 

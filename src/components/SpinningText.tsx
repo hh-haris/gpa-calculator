@@ -1,7 +1,3 @@
-
-
-
-
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -43,6 +39,9 @@ function SpinningText() {
           exit={{ opacity: 0, scale: 0.8 }}
           transition={{ duration: 0.3 }}
         >
+          {/* Glass morphic circle background */}
+          <div className="absolute inset-0 bg-white/20 backdrop-blur-md rounded-full border border-white/30 shadow-lg"></div>
+          
           <motion.div
             className="relative"
             initial={{ rotate: 0 }}
@@ -54,7 +53,7 @@ function SpinningText() {
             }}
             style={{
               width: '110px',
-              height: '210px',
+              height: '110px',
             }}
           >
             {letters.map((letter, index) => (
@@ -66,7 +65,7 @@ function SpinningText() {
                   top: '50%',
                   transform: `
                     rotate(${(360 / total) * index}deg)
-                    translateY(-5em)
+                    translateY(-3.5em)
                   `,
                   transformOrigin: 'center',
                 }}

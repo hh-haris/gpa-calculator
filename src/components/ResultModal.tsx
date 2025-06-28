@@ -1,7 +1,6 @@
-
 import React, { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { X, Target, Award, MessageSquare, Download, Share, Trophy } from 'lucide-react';
+import { X, Target, Award, MessageSquare, Download, Share } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface ResultModalProps {
@@ -71,21 +70,6 @@ Calculated using UoH GPA Calculator ✨`;
     
     const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
-  };
-
-  const handleShareOnWall = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    // Store the result data in localStorage for the GPA Wall
-    localStorage.setItem('gpaResultToShare', JSON.stringify({
-      gpa: result.gpa,
-      grade: result.grade,
-      remarks: result.remarks
-    }));
-    
-    // Navigate to GPA Wall
-    window.location.href = '/gpa-wall';
   };
 
   if (!isOpen) return null;
@@ -233,24 +217,6 @@ Calculated using UoH GPA Calculator ✨`;
               >
                 <Share size={16} className="mr-2" />
                 Share on WhatsApp
-              </Button>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7 }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <Button
-                onClick={handleShareOnWall}
-                className="bg-[#000000] hover:bg-[#333333] text-white font-inter w-full transition-all duration-200"
-                type="button"
-                style={{ pointerEvents: 'auto' }}
-              >
-                <Trophy size={16} className="mr-2" />
-                Share on GPA Wall
               </Button>
             </motion.div>
           </div>

@@ -1,14 +1,16 @@
 # UoH GPA Calculator
 
-A modern, responsive GPA and CGPA calculator designed specifically for University of Hyderabad students.
+A modern, responsive GPA and CGPA calculator designed specifically for students.
 
 ## Features
 
 - **GPA Calculator**: Calculate semester GPA based on subject marks and credit hours
-- **CGPA Calculator**: Calculate cumulative GPA across multiple semesters
+- **CGPA Calculator**: Calculate cumulative GPA across multiple semesters (max 8 semesters)
 - **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
 - **Modern UI**: Clean, intuitive interface with smooth animations
-- **Export Results**: Download calculation results as text files
+- **Export Results**: Download calculation results as PDF files
+- **WhatsApp Sharing**: Share results directly on WhatsApp
+- **Analytics Tracking**: Track user interactions and usage patterns
 
 ## Technologies Used
 
@@ -18,6 +20,7 @@ A modern, responsive GPA and CGPA calculator designed specifically for Universit
 - **Animations**: Framer Motion
 - **Build Tool**: Vite
 - **Icons**: Lucide React
+- **Database**: Supabase for analytics tracking
 
 ## Getting Started
 
@@ -62,12 +65,12 @@ The built files will be available in the `dist` directory.
 3. Click "Calculate GPA" to see your results
 
 ### CGPA Calculator
-1. Add semesters with their respective GPA and credit hours
+1. Add semesters with their respective GPA and credit hours (maximum 8 semesters)
 2. Click "Calculate CGPA" to see your cumulative results
 
 ## Grading System
 
-The calculator uses the University of Hyderabad grading system:
+The calculator uses a standard grading system:
 
 - **A (85-100%)**: Excellent (4.00 GPA)
 - **A- (80-84%)**: Excellent (3.50-3.90 GPA)
@@ -81,9 +84,18 @@ The calculator uses the University of Hyderabad grading system:
 - **D (50-53%)**: Minimum Acceptable (1.00-1.25 GPA)
 - **F (<50%)**: Fail (0.00 GPA)
 
+## Analytics
+
+The application tracks user analytics including:
+- Number of calculations performed
+- PDF downloads
+- WhatsApp shares
+- Device information
+- Session tracking
+
 ## Contributing
 
-This project was created by students of Batch 2024 – AI Section A & B. Contributions and improvements are welcome!
+Created with ❤️ by Haris H. Contributions and improvements are welcome!
 
 ## Disclaimer
 
