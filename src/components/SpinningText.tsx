@@ -36,7 +36,7 @@ function SpinningText() {
           className="fixed top-4 right-4 z-50"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.2 }}
+          exit={{ opacity: 0, scale: 0.1}}
           transition={{ duration: 0.3 }}
         >
           <div className="relative w-[110px] h-[110px] flex items-center justify-center">
