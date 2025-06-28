@@ -41,7 +41,7 @@ function SpinningText() {
         >
           <div className="relative w-[110px] h-[110px] flex items-center justify-center">
             {/* ✅ Glassmorphic Circular Background */}
-            <div className="absolute inset-0 bg-white/100 backdrop-blur-md rounded-full border border-white/30 shadow-lg" />
+            <div className="absolute inset-0 bg-white/5 backdrop-blur-md rounded-full border border-white/30 shadow-lg" />
 
             {/* ✅ Spinning Text Circle */}
             <motion.div
