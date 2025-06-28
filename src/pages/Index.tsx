@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { StickyBanner } from '@/components/ui/sticky-banner';
 import GPACalculator from '@/components/GPACalculator';
 import CGPACalculator from '@/components/CGPACalculator';
 import FluidTabs from '@/components/FluidTabs';
@@ -34,13 +32,6 @@ const Index = () => {
       
       {/* Spinning Text Component */}
       <SpinningText />
-      
-      {/* Sticky Banner */}
-      <StickyBanner className="bg-gradient-to-r from-[#0088CC] to-[#0077BB]">
-        <p className="mx-0 max-w-[90%] text-white drop-shadow-md font-inter text-xs sm:text-sm">
-          Created with ❤️ by Haris H
-        </p>
-      </StickyBanner>
 
       <div className="container mx-auto px-4 py-4 sm:py-8 max-w-5xl relative z-10">
         {/* Header */}
@@ -70,9 +61,9 @@ const Index = () => {
             transition={{ duration: 0.5, delay: 0.3 }}
           >
             <div className="bg-[#FAE6B4] p-4 max-w-2xl mx-auto rounded-xl">
-              <AlertDescription className="text-[#979797] font-inter text-xs sm:text-sm text-center">
+              <div className="text-[#979797] font-inter text-xs sm:text-sm text-center">
                 While this calculator is designed with care and accuracy in mind, any unexpected errors or incorrect results are beyond our responsibility.
-              </AlertDescription>
+              </div>
             </div>
           </motion.div>
         </motion.div>
