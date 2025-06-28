@@ -40,7 +40,7 @@ function SpinningText() {
           transition={{ duration: 0.3 }}
         >
           {/* Glass morphic circle background */}
-          <div className="absolute inset-0 bg-white/30 backdrop-blur-md rounded-full border border-white/30 shadow-lg"></div>
+          <div className="absolute inset-0 bg-white/10 backdrop-blur-md rounded-full border border-white/30 shadow-lg"></div>
           
           <motion.div
             className="relative"
