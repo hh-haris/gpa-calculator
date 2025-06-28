@@ -272,7 +272,7 @@ const CGPACalculator = ({ onCalculate }: CGPACalculatorProps) => {
       // Creator credit
       doc.setFontSize(12);
       doc.setTextColor(0, 136, 204);
-      doc.text('Created with by Haris H', 105, yPosition + 50, { align: 'center' });
+      doc.text('Created by Haris H', 105, yPosition + 50, { align: 'center' });
       
       // Website credit
       doc.setFontSize(8);
