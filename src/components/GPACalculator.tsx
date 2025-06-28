@@ -292,7 +292,7 @@ const GPACalculator = ({ onCalculate }: GPACalculatorProps) => {
       // Website credit
       doc.setFontSize(8);
       doc.setTextColor(150, 150, 150);
-      doc.text('UoH GPA Calculator - Your Academic Companion', 105, yPosition + 60, { align: 'center' });
+      doc.text('UoH GPA Calculator', 105, yPosition + 60, { align: 'center' });
       
       // Save the PDF
       doc.save(`GPA_Results_${new Date().toISOString().split('T')[0]}.pdf`);
