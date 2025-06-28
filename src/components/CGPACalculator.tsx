@@ -171,54 +171,113 @@ const CGPACalculator = ({ onCalculate }: CGPACalculatorProps) => {
       // Set font
       doc.setFont('helvetica');
       
-      // Title
-      doc.setFontSize(20);
+      // Header with improved design
+      doc.setFontSize(24);
       doc.setTextColor(0, 136, 204); // #0088CC
-      doc.text('UoH CGPA Calculator Results', 20, 30);
+      doc.text('UoH GPA Calculator', 105, 25, { align: 'center' });
       
-      // Horizontal line
-      doc.setDrawColor(238, 238, 238); // #EEEEEE
-      doc.line(20, 35, 190, 35);
-      
-      // Results section
-      doc.setFontSize(14);
-      doc.setTextColor(0, 0, 0);
-      doc.text('Results:', 20, 50);
-      
+      // Subtitle
       doc.setFontSize(12);
-      doc.text(`CGPA: ${result.gpa.toFixed(2)}`, 30, 65);
-      doc.text(`Grade: ${result.grade}`, 30, 75);
-      doc.text(`Remarks: ${result.remarks}`, 30, 85);
+      doc.setTextColor(100, 100, 100);
+      doc.text('University of Haripur', 105, 35, { align: 'center' });
+      
+      // Decorative line
+      doc.setDrawColor(0, 136, 204);
+      doc.setLineWidth(0.5);
+      doc.line(20, 45, 190, 45);
+      
+      // Results section with better formatting
+      doc.setFontSize(16);
+      doc.setTextColor(0, 0, 0);
+      doc.text('CGPA Results', 20, 60);
+      
+      // Results box
+      doc.setDrawColor(238, 238, 238);
+      doc.setFillColor(248, 249, 250);
+      doc.roundedRect(20, 70, 170, 40, 3, 3, 'FD');
+      
+      // CGPA Result
+      doc.setFontSize(14);
+      doc.setTextColor(0, 136, 204);
+      doc.text('CGPA:', 30, 85);
+      doc.setFontSize(18);
+      doc.setTextColor(0, 0, 0);
+      doc.text(result.gpa.toFixed(2), 70, 85);
+      
+      // Grade
+      doc.setFontSize(14);
+      doc.setTextColor(0, 136, 204);
+      doc.text('Grade:', 30, 95);
+      doc.setFontSize(16);
+      doc.setTextColor(0, 0, 0);
+      doc.text(result.grade, 70, 95);
+      
+      // Remarks
+      doc.setFontSize(14);
+      doc.setTextColor(0, 136, 204);
+      doc.text('Remarks:', 30, 105);
+      doc.setFontSize(12);
+      doc.setTextColor(0, 0, 0);
+      doc.text(result.remarks, 80, 105);
       
       // Semester details section
-      doc.setFontSize(14);
-      doc.text('Semester Details:', 20, 105);
+      doc.setFontSize(16);
+      doc.setTextColor(0, 0, 0);
+      doc.text('Semester Details', 20, 130);
       
+      // Table header
       doc.setFontSize(10);
-      let yPosition = 120;
+      doc.setTextColor(100, 100, 100);
+      doc.text('No.', 25, 145);
+      doc.text('Semester', 40, 145);
+      doc.text('GPA', 120, 145);
+      doc.text('Credit Hours', 150, 145);
+      
+      // Table line
+      doc.setDrawColor(200, 200, 200);
+      doc.line(20, 148, 190, 148);
+      
+      let yPosition = 160;
       semesters.forEach((semester, index) => {
         if (yPosition > 270) { // Check if we need a new page
           doc.addPage();
-          yPosition = 20;
+          yPosition = 30;
         }
-        doc.text(
-          `${index + 1}. ${semester.name}: GPA ${semester.gpa.toFixed(2)} (${semester.totalCreditHours} credit hours)`,
-          30,
-          yPosition
-        );
-        yPosition += 10;
+        
+        doc.setFontSize(9);
+        doc.setTextColor(0, 0, 0);
+        doc.text(`${index + 1}.`, 25, yPosition);
+        doc.text(semester.name, 40, yPosition);
+        doc.text(semester.gpa.toFixed(2), 120, yPosition);
+        doc.text(semester.totalCreditHours.toString(), 160, yPosition);
+        
+        yPosition += 12;
       });
       
-      // Footer
+      // Footer with improved design
       if (yPosition > 250) {
         doc.addPage();
-        yPosition = 20;
+        yPosition = 30;
       }
       
+      // Footer line
+      doc.setDrawColor(0, 136, 204);
+      doc.line(20, yPosition + 20, 190, yPosition + 20);
+      
+      // Footer text
+      doc.setFontSize(10);
+      doc.setTextColor(100, 100, 100);
+      doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, yPosition + 35);
+      
+      // Creator credit
+      doc.setFontSize(12);
+      doc.setTextColor(0, 136, 204);
+      doc.text('Created with ❤️ by Haris H', 105, yPosition + 50, { align: 'center' });
+      
+      // Website credit
       doc.setFontSize(8);
-      doc.setTextColor(151, 151, 151); // #979797
-      doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, yPosition + 20);
-      doc.text('Created with ❤️ by Haris H', 20, yPosition + 30);
+      doc.setTextColor(150, 150, 150);
+      doc.text('UoH GPA Calculator - Your Academic Companion', 105, yPosition + 60, { align: 'center' });
       
       // Save the PDF
       doc.save(`CGPA_Results_${new Date().toISOString().split('T')[0]}.pdf`);
