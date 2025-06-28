@@ -44,7 +44,7 @@ const GPACalculator = ({ onCalculate }: GPACalculatorProps) => {
       const newSubjects = Array.from({ length: subjectCount }, (_, index) => ({
         id: (index + 1).toString(),
         name: '',
-        marks: 0,
+        marks: '', // Changed to empty string instead of 0
         creditHours: 1
       }));
       setSubjects(newSubjects);
@@ -131,9 +131,14 @@ const GPACalculator = ({ onCalculate }: GPACalculatorProps) => {
   };
 
   const calculateResult = () => {
-    const validSubjects = subjects.filter(subject => 
-      subject.name.trim() !== '' && subject.marks >= 0 && subject.marks <= 100
-    );
+    // Convert marks to numbers and validate
+    const validSubjects = subjects.filter(subject => {
+      const marks = typeof subject.marks === 'string' ? parseFloat(subject.marks) : subject.marks;
+      return subject.name.trim() !== '' && !isNaN(marks) && marks >= 0 && marks <= 100;
+    }).map(subject => ({
+      ...subject,
+      marks: typeof subject.marks === 'string' ? parseFloat(subject.marks) : subject.marks
+    }));
 
     if (validSubjects.length === 0) {
       toast({
@@ -209,8 +214,9 @@ const GPACalculator = ({ onCalculate }: GPACalculatorProps) => {
           doc.addPage();
           yPosition = 20;
         }
+        const marks = typeof subject.marks === 'string' ? parseFloat(subject.marks) : subject.marks;
         doc.text(
-          `${index + 1}. ${subject.name}: ${subject.marks}/100 (${subject.creditHours} credit hours)`,
+          `${index + 1}. ${subject.name}: ${marks}/100 (${subject.creditHours} credit hours)`,
           30,
           yPosition
         );
@@ -363,7 +369,14 @@ const GPACalculator = ({ onCalculate }: GPACalculatorProps) => {
                               min="0"
                               max="100"
                               value={subject.marks}
-                              onChange={(e) => updateSubject(subject.id, 'marks', Number(e.target.value))}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                // Allow empty string or valid numbers between 0-100
+                                if (value === '' || (Number(value) >= 0 && Number(value) <= 100)) {
+                                  updateSubject(subject.id, 'marks', value);
+                                }
+                              }}
+                              placeholder="Enter marks"
                               className="border-[#979797] focus:border-[#0088CC] text-sm sm:text-base"
                             />
                           </div>

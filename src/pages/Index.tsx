@@ -3,7 +3,6 @@ import GPACalculator from '@/components/GPACalculator';
 import CGPACalculator from '@/components/CGPACalculator';
 import FluidTabs from '@/components/FluidTabs';
 import { GridBackground } from '@/components/GridBackground';
-import SpinningText from '@/components/SpinningText';
 import { motion } from 'framer-motion';
 import { trackAnalytics } from '@/utils/analytics';
 
@@ -29,9 +28,6 @@ const Index = () => {
     <div className="min-h-screen bg-white font-inter transition-all duration-300 relative">
       {/* Grid Background */}
       <GridBackground />
-      
-      {/* Spinning Text Component */}
-      <SpinningText />
 
       <div className="container mx-auto px-4 py-4 sm:py-8 max-w-5xl relative z-10">
         {/* Header */}

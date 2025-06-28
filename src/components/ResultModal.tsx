@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { X, Target, Award, MessageSquare, Download, Share } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { trackAnalytics } from '@/utils/analytics';
 
 interface ResultModalProps {
   isOpen: boolean;
@@ -50,13 +51,18 @@ const ResultModal = ({ isOpen, onClose, result, onExport }: ResultModalProps) =>
     onClose();
   };
 
-  const handleExportClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleExportClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
     onExport();
+    
+    // Track PDF download
+    await trackAnalytics({
+      pdfDownloaded: true
+    });
   };
 
-  const handleWhatsAppShare = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleWhatsAppShare = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
     
@@ -70,6 +76,11 @@ Calculated using UoH GPA Calculator ✨`;
     
     const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
+    
+    // Track WhatsApp share
+    await trackAnalytics({
+      whatsappShared: true
+    });
   };
 
   if (!isOpen) return null;
@@ -94,9 +105,9 @@ Calculated using UoH GPA Calculator ✨`;
           onClick={handleBackdropClick}
         />
         
-        {/* Modal Content */}
+        {/* Modal Content - Made smaller and centered */}
         <motion.div
-          className="relative bg-white/90 backdrop-blur-md border border-white/30 rounded-xl shadow-2xl max-w-md w-full mx-4 p-6 overflow-hidden"
+          className="relative bg-white/90 backdrop-blur-md border border-white/30 rounded-xl shadow-2xl max-w-sm w-full mx-4 p-4 overflow-hidden"
           initial={{ scale: 0.9, opacity: 0, y: 20 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.9, opacity: 0, y: 20 }}
@@ -112,78 +123,78 @@ Calculated using UoH GPA Calculator ✨`;
             onClick={handleCloseClick}
             variant="ghost"
             size="sm"
-            className="absolute top-4 right-4 text-[#979797] hover:text-[#000000] z-[10000] h-8 w-8 p-0 hover:bg-gray-100 rounded-full transition-all duration-200"
+            className="absolute top-2 right-2 text-[#979797] hover:text-[#000000] z-[10000] h-6 w-6 p-0 hover:bg-gray-100 rounded-full transition-all duration-200"
             style={{ pointerEvents: 'auto' }}
             type="button"
           >
-            <X size={20} />
+            <X size={16} />
           </Button>
 
           {/* Header */}
           <motion.div
-            className="text-center mb-6 relative z-10"
+            className="text-center mb-4 relative z-10"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
           >
-            <h2 className="text-xl font-bold text-[#0088CC] font-jakarta">
+            <h2 className="text-lg font-bold text-[#0088CC] font-jakarta">
               GPA Results
             </h2>
           </motion.div>
 
           {/* Results */}
-          <div className="space-y-4 mb-6 relative z-10">
+          <div className="space-y-3 mb-4 relative z-10">
             <motion.div
-              className="bg-white/50 p-4 rounded-lg border border-white/20 text-center relative overflow-hidden"
+              className="bg-white/50 p-3 rounded-lg border border-white/20 text-center relative overflow-hidden"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
             >
               <div className="absolute inset-0 bg-gradient-to-r from-[#0088CC]/5 to-transparent"></div>
-              <div className="flex items-center justify-center mb-2 relative z-10">
-                <Target className="text-[#0088CC] mr-2" size={20} />
+              <div className="flex items-center justify-center mb-1 relative z-10">
+                <Target className="text-[#0088CC] mr-2" size={16} />
               </div>
-              <div className="text-2xl font-bold text-[#0088CC] font-jakarta relative z-10">
+              <div className="text-xl font-bold text-[#0088CC] font-jakarta relative z-10">
                 {result.gpa.toFixed(2)}
               </div>
-              <div className="text-[#979797] font-inter text-sm relative z-10">GPA</div>
+              <div className="text-[#979797] font-inter text-xs relative z-10">GPA</div>
             </motion.div>
             
             <motion.div
-              className="bg-white/50 p-4 rounded-lg border border-white/20 text-center relative overflow-hidden"
+              className="bg-white/50 p-3 rounded-lg border border-white/20 text-center relative overflow-hidden"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
             >
               <div className="absolute inset-0 bg-gradient-to-r from-[#000000]/5 to-transparent"></div>
-              <div className="flex items-center justify-center mb-2 relative z-10">
-                <Award className="text-[#000000] mr-2" size={20} />
+              <div className="flex items-center justify-center mb-1 relative z-10">
+                <Award className="text-[#000000] mr-2" size={16} />
               </div>
-              <div className="text-2xl font-bold text-[#000000] font-jakarta relative z-10">
+              <div className="text-xl font-bold text-[#000000] font-jakarta relative z-10">
                 {result.grade}
               </div>
-              <div className="text-[#979797] font-inter text-sm relative z-10">Grade</div>
+              <div className="text-[#979797] font-inter text-xs relative z-10">Grade</div>
             </motion.div>
             
             <motion.div
-              className="bg-white/50 p-4 rounded-lg border border-white/20 text-center relative overflow-hidden"
+              className="bg-white/50 p-3 rounded-lg border border-white/20 text-center relative overflow-hidden"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4 }}
             >
               <div className="absolute inset-0 bg-gradient-to-r from-[#979797]/5 to-transparent"></div>
-              <div className="flex items-center justify-center mb-2 relative z-10">
-                <MessageSquare className="text-[#000000] mr-2" size={20} />
+              <div className="flex items-center justify-center mb-1 relative z-10">
+                <MessageSquare className="text-[#000000] mr-2" size={16} />
               </div>
-              <div className="text-lg font-bold text-[#000000] font-jakarta relative z-10">
+              <div className="text-sm font-bold text-[#000000] font-jakarta relative z-10">
                 {result.remarks}
               </div>
-              <div className="text-[#979797] font-inter text-sm relative z-10">Remarks</div>
+              <div className="text-[#979797] font-inter text-xs relative z-10">Remarks</div>
             </motion.div>
           </div>
           
           {/* Action Buttons */}
-          <div className="space-y-3 relative z-10">
+          <div className="space-y-2 relative z-10">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -193,11 +204,11 @@ Calculated using UoH GPA Calculator ✨`;
             >
               <Button
                 onClick={handleExportClick}
-                className="bg-[#0088CC] hover:bg-[#0077BB] text-white font-inter w-full transition-all duration-200"
+                className="bg-[#0088CC] hover:bg-[#0077BB] text-white font-inter w-full transition-all duration-200 text-sm h-10"
                 type="button"
                 style={{ pointerEvents: 'auto' }}
               >
-                <Download size={16} className="mr-2" />
+                <Download size={14} className="mr-2" />
                 Export as PDF
               </Button>
             </motion.div>
@@ -211,11 +222,11 @@ Calculated using UoH GPA Calculator ✨`;
             >
               <Button
                 onClick={handleWhatsAppShare}
-                className="bg-green-500 hover:bg-green-600 text-white font-inter w-full transition-all duration-200"
+                className="bg-green-500 hover:bg-green-600 text-white font-inter w-full transition-all duration-200 text-sm h-10"
                 type="button"
                 style={{ pointerEvents: 'auto' }}
               >
-                <Share size={16} className="mr-2" />
+                <Share size={14} className="mr-2" />
                 Share on WhatsApp
               </Button>
             </motion.div>
