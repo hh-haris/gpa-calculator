@@ -1,8 +1,7 @@
-
 export interface Subject {
   id: string;
   name: string;
-  marks: number;
+  marks: number | string; // Allow both number and string for input handling
   creditHours: number;
 }
 
@@ -91,7 +90,9 @@ export const calculateGPA = (subjects: Subject[]): number => {
   let totalCreditHours = 0;
 
   subjects.forEach(subject => {
-    const percentage = getPercentage(subject.marks);
+    // Convert marks to number if it's a string
+    const marks = typeof subject.marks === 'string' ? parseFloat(subject.marks) : subject.marks;
+    const percentage = getPercentage(marks);
     const numericalGrade = getNumericalGrade(percentage);
     const gradePoints = numericalGrade * subject.creditHours;
     totalGradePoints += gradePoints;
