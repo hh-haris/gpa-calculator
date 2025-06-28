@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 function SpinningText() {
   const [isVisible, setIsVisible] = useState(true);
-  const text = "Created by Haris H ";
+  const text = "Created by Haris H •";
   const letters = text.split('');
   const total = letters.length;
 
